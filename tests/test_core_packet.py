@@ -39,11 +39,12 @@ class CorePacket(unittest.TestCase):
         self.assertEqual(mt, {"a": 1})
         self.assertTrue(np.all(dt == np.array([1, 2, 3])))
         mt["a"] = 2
-        dt *= np.array([1, 2, 3])
+        dt[1] = 3
         self.assertEqual(mt, {"a": 2})
-        self.assertTrue(np.all(dt == np.array([1, 4, 9])))
+        self.assertTrue(np.all(dt == np.array([1, 3, 3])))
         self.assertEqual(p2.metadata(), {"a": 1})
         self.assertTrue(np.all(p2.data() == np.array([1, 2, 3])))
+        self.assertFalse(np.all(p2.data() == dt))
         p3 = p2.copy()
         self.assertEqual(p3.metadata(), {"a": 1})
         self.assertTrue(np.all(p3.data() == np.array([1, 2, 3])))
@@ -52,6 +53,11 @@ class CorePacket(unittest.TestCase):
         self.assertEqual(mt, mt2)
         mt2["a"] = 2
         self.assertNotEqual(mt, mt2)
+        dt = p2.data()
+        dt2 = p3.data()
+        self.assertTrue(np.all(dt == dt2))
+        dt[1] = 4
+        self.assertFalse(np.all(dt == dt2))
 
         with self.assertRaises(self.exceptions.FoneInvalidArgument):
             self.packet.FonePacket(metadata=["A", "b"])
