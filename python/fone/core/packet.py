@@ -30,10 +30,16 @@ class FonePacket(object):
 
 
 class FonePacketArray(object):
-    def __init__(self, count, packets):
+    def __init__(self, packets):
         super(FonePacketArray, self).__init__()
-        self.__count = count
+        if not isinstance(packets, list):
+            raise exceptions.FoneInvalidArgument(list, packets)
+        for fp in packets:
+            if not isinstance(fp, FonePacket):
+                raise exceptions.FoneInvalidArgument(FonePacket, fp)
+
         self.__packets = packets[:]
+        self.__count = len(packets)
 
     def count(self):
         return self.__count
@@ -42,4 +48,4 @@ class FonePacketArray(object):
         if index >= self.__count:
             return FonePacket()
 
-        return self.__count[index]
+        return self.__packets[index]

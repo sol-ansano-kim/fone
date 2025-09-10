@@ -17,7 +17,7 @@ class CorePacket(unittest.TestCase):
             cls.packet = packet
             cls.exceptions = exceptions
 
-    def test_packet_1(self):
+    def testPacket(self):
         p = self.packet.FonePacket()
         self.assertIsNotNone(p)
         self.assertTrue(isinstance(p.metadata(), dict))
@@ -63,3 +63,41 @@ class CorePacket(unittest.TestCase):
             self.packet.FonePacket(metadata=["A", "b"])
         with self.assertRaises(self.exceptions.FoneInvalidArgument):
             self.packet.FonePacket(data=[1, 2])
+
+    def testPacketArray(self):
+        p1 = self.packet.FonePacket(metadata={"a": 1}, data=np.array([1, 2, 3]))
+        pa1 = self.packet.FonePacketArray([p1])
+        self.assertIsNotNone(pa1)
+        self.assertEqual(pa1.count(), 1)
+        self.assertEqual(len(pa1.packet(0).data()), 3)
+        self.assertEqual(len(pa1.packet(1).data()), 0)
+        self.assertEqual(len(pa1.packet(1000).data()), 0)
+        self.assertEqual(pa1.packet(0).data()[0], 1)
+        self.assertEqual(pa1.packet(0).data()[1], 2)
+        self.assertEqual(pa1.packet(0).data()[2], 3)
+        self.assertEqual(pa1.packet(0).metadata().get("a", -1), 1)
+        self.assertEqual(pa1.packet(1).metadata().get("a", -1), -1)
+        self.assertEqual(pa1.packet(1000).metadata().get("a", -1), -1)
+
+        p2 = self.packet.FonePacket(metadata={"a": 2}, data=np.array([4, 5, 6]))
+        pa2 = self.packet.FonePacketArray([p1, p2])
+        self.assertEqual(pa2.count(), 2)
+        self.assertEqual(len(pa2.packet(0).data()), 3)
+        self.assertEqual(len(pa2.packet(1).data()), 3)
+        self.assertEqual(len(pa2.packet(2).data()), 0)
+        self.assertEqual(len(pa2.packet(1000).data()), 0)
+        self.assertEqual(pa2.packet(0).data()[0], 1)
+        self.assertEqual(pa2.packet(0).data()[1], 2)
+        self.assertEqual(pa2.packet(0).data()[2], 3)
+        self.assertEqual(pa2.packet(1).data()[0], 4)
+        self.assertEqual(pa2.packet(1).data()[1], 5)
+        self.assertEqual(pa2.packet(1).data()[2], 6)
+        self.assertEqual(pa2.packet(0).metadata().get("a", -1), 1)
+        self.assertEqual(pa2.packet(1).metadata().get("a", -1), 2)
+        self.assertEqual(pa2.packet(2).metadata().get("a", -1), -1)
+        self.assertEqual(pa2.packet(1000).metadata().get("a", -1), -1)
+
+        with self.assertRaises(self.exceptions.FoneInvalidArgument):
+            self.packet.FonePacketArray(p1)
+        with self.assertRaises(self.exceptions.FoneInvalidArgument):
+            self.packet.FonePacketArray([p1, np.ndarray([7, 8, 9])])
