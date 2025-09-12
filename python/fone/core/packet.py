@@ -12,12 +12,12 @@ class FonePacket(object):
         if isinstance(metadata, dict):
             self.__metadata = metadata.copy()
         elif metadata is not None:
-            raise exceptions.FoneInvalidArgument(dict, metadata)
+            raise exceptions.FoneInvalidArgumentError(dict, metadata)
 
         if isinstance(data, np.ndarray):
             self.__data = data.copy()
         elif data is not None:
-            raise exceptions.FoneInvalidArgument(np.ndarray, data)
+            raise exceptions.FoneInvalidArgumentError(np.ndarray, data)
 
     def copy(self):
         return FonePacket(metadata=self.__metadata, data=self.__data)
@@ -33,10 +33,10 @@ class FonePacketArray(object):
     def __init__(self, packets):
         super(FonePacketArray, self).__init__()
         if not isinstance(packets, list):
-            raise exceptions.FoneInvalidArgument(list, packets)
+            raise exceptions.FoneInvalidArgumentError(list, packets)
         for fp in packets:
             if not isinstance(fp, FonePacket):
-                raise exceptions.FoneInvalidArgument(FonePacket, fp)
+                raise exceptions.FoneInvalidArgumentError(FonePacket, fp)
 
         self.__packets = packets[:]
         self.__count = len(packets)

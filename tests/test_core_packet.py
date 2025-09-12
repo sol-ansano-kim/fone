@@ -59,9 +59,9 @@ class CorePacket(unittest.TestCase):
         dt[1] = 4
         self.assertFalse(np.all(dt == dt2))
 
-        with self.assertRaises(self.exceptions.FoneInvalidArgument):
+        with self.assertRaises(self.exceptions.FoneInvalidArgumentError):
             self.packet.FonePacket(metadata=["A", "b"])
-        with self.assertRaises(self.exceptions.FoneInvalidArgument):
+        with self.assertRaises(self.exceptions.FoneInvalidArgumentError):
             self.packet.FonePacket(data=[1, 2])
 
     def testPacketArray(self):
@@ -97,7 +97,7 @@ class CorePacket(unittest.TestCase):
         self.assertEqual(pa2.packet(2).metadata().get("a", -1), -1)
         self.assertEqual(pa2.packet(1000).metadata().get("a", -1), -1)
 
-        with self.assertRaises(self.exceptions.FoneInvalidArgument):
+        with self.assertRaises(self.exceptions.FoneInvalidArgumentError):
             self.packet.FonePacketArray(p1)
-        with self.assertRaises(self.exceptions.FoneInvalidArgument):
+        with self.assertRaises(self.exceptions.FoneInvalidArgumentError):
             self.packet.FonePacketArray([p1, np.ndarray([7, 8, 9])])
