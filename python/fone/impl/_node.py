@@ -65,6 +65,6 @@ class _FoneNodeImpl(object):
 
     def disconnectAllInputs(self):
         for i in range(self.__op.requiredInputs()):
-            disconnectInput(i)
+            self.disconnectInput(i)
 
         return True
