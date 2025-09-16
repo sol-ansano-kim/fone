@@ -5,14 +5,23 @@ from .. import exceptions
 class _FoneNodeImpl(object):
     def __init__(self, op, node):
         super(_FoneNodeImpl, self).__init__()
-        self.__id = str(uuid.uuid4())
+        self.__id = uuid.uuid4()
         self.__op = op
         self.__node = node
         self.__inputs = [None] * self.__op.requiredInputs()
         self.__outputs = set()
 
     def __hash__(self):
+        return self.__id.int
+
+    def id(self):
         return self.__id
+
+    def __eq__(self, other):
+        return isinstance(other, _FoneNodeImpl) and other.id() == self.__id
+
+    def __neq__(self, other):
+        return not self.__eq__(other)
 
     def node(self):
         return self.__node
