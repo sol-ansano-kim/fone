@@ -41,7 +41,7 @@ class _FoneNodeImpl(object):
     def outputs(self):
         return list(self.__outputs)
 
-    def connectOutput(self, nodeImpl):
+    def _connectOutput(self, nodeImpl):
         if nodeImpl in self.__outputs:
             return False
 
@@ -52,7 +52,7 @@ class _FoneNodeImpl(object):
 
         return True
 
-    def disconnectOutput(self, nodeImpl):
+    def _disconnectOutput(self, nodeImpl):
         if not nodeImpl in self.__outputs:
             return False
 
@@ -72,10 +72,10 @@ class _FoneNodeImpl(object):
             _org = self.__inputs[index]
 
         self.__inputs[index] = nodeImpl
-        self.__inputs[index].connectOutput(self)
+        self.__inputs[index]._connectOutput(self)
 
         if _org is not None and _org not in self.__inputs:
-            _org.disconnectOutput(self)
+            _org._disconnectOutput(self)
 
         return True
 
@@ -90,7 +90,7 @@ class _FoneNodeImpl(object):
         self.__inputs[index] = None
 
         if _org is not None and _org not in self.__inputs:
-            _org.disconnectOutput(self)
+            _org._disconnectOutput(self)
 
         return True
 

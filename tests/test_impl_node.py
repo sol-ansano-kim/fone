@@ -82,7 +82,7 @@ class ImplNode(unittest.TestCase):
         self.assertTrue(i1.generateOutput())
         self.assertFalse(i2.generateOutput())
 
-    def test_connect1(self):
+    def test_connect(self):
         i0 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
         i1 = self._node._FoneNodeImpl(self.OneInputs(), None)
 
@@ -120,3 +120,31 @@ class ImplNode(unittest.TestCase):
         self.assertFalse(i1.connectInput(0, i2))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
         self.assertEqual(i1.inputs()[0], i0)
+
+        i01 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
+        i02 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
+        i1 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        i2 = self._node._FoneNodeImpl(self.TwoInputs(), None)
+
+        self.assertTrue(i1.connectInput(0, i01))
+        self.assertEqual(len([x for x in i1.inputs() if x]), 1)
+        self.assertEqual(len(i01.outputs()), 1)
+        self.assertEqual(len(i02.outputs()), 0)
+        self.assertTrue(i1.connectInput(0, i02))
+        self.assertEqual(len([x for x in i1.inputs() if x]), 1)
+        self.assertEqual(len(i01.outputs()), 0)
+        self.assertEqual(len(i02.outputs()), 1)
+
+        i2.connectInput(0, i02)
+        i2.connectInput(1, i1)
+        self.assertEqual(len([x for x in i1.inputs() if x]), 1)
+        self.assertEqual(len(i02.outputs()), 2)
+        self.assertEqual(len(i1.outputs()), 1)
+
+        i2.disconnectAllInputs()
+        self.assertEqual(len([x for x in i2.inputs() if x]), 0)
+        self.assertEqual(len(i02.outputs()), 1)
+        self.assertEqual(len(i1.outputs()), 0)
+        i1.disconnectAllInputs()
+        self.assertEqual(len(i02.outputs()), 0)
+        self.assertEqual(len([x for x in i1.inputs() if x]), 0)
