@@ -32,8 +32,20 @@ class _FoneNodeImpl(object):
     def requiredInputs(self):
         return self.__op.requiredInputs()
 
+    def generateOutput(self):
+        return self.__op.generateOutput()
+
+    def inputs(self):
+        return self.__inputs[:]
+
+    def outputs(self):
+        return list(self.__outputs)
+
     def connectOutput(self, nodeImpl):
         if nodeImpl in self.__outputs:
+            return False
+
+        if not self.__op.generateOutput():
             return False
 
         self.__outputs.add(nodeImpl)
@@ -49,26 +61,36 @@ class _FoneNodeImpl(object):
         return True
 
     def connectInput(self, index, nodeImpl):
-        if index >= len(self.__op.requiredInputs()):
+        if index >= self.__op.requiredInputs():
             raise exceptions.FoneIndexError(index, self.__op.requiredInputs())
 
+        if not nodeImpl.generateOutput():
+            return False
+
+        _org = None
         if self.__inputs[index] is not None:
-            self.__inputs[index].disconnectOutput(self)
+            _org = self.__inputs[index]
 
         self.__inputs[index] = nodeImpl
         self.__inputs[index].connectOutput(self)
 
+        if _org is not None and _org not in self.__inputs:
+            _org.disconnectOutput(self)
+
         return True
 
     def disconnectInput(self, index):
-        if index >= len(self.__op.requiredInputs()):
+        if index >= self.__op.requiredInputs():
             raise exceptions.FoneIndexError(index, self.__op.requiredInputs())
 
         if self.__inputs[index] is None:
             return False
 
-        self.__inputs[index].disconnectOutput(self)
+        _org = self.__inputs[index]
         self.__inputs[index] = None
+
+        if _org is not None and _org not in self.__inputs:
+            _org.disconnectOutput(self)
 
         return True
 

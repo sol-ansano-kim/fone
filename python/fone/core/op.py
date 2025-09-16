@@ -13,3 +13,6 @@ class FoneOp(object):
 
     def params(self):
         raise exceptions.FoneNotImplementedError(self, "params")
+
+    def generateOutput(self):
+        raise exceptions.FoneNotImplementedError(self, "generateOutput")
