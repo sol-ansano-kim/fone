@@ -67,7 +67,7 @@ class FoneParamStr(FoneParamBase):
         super(FoneParamStr, self).__init__(name, default)
 
     def type(self):
-        return FoneParamStr
+        return FoneParamTypeStr
 
     def enforceValueList(self):
         return self.__enforce_value_list
@@ -76,7 +76,7 @@ class FoneParamStr(FoneParamBase):
         return self.__value_list[:]
 
     def isValid(self, value):
-        if not instance(value, str):
+        if not isinstance(value, str):
             return False
 
         if self.__enforce_value_list and value not in self.__value_list:
@@ -91,7 +91,7 @@ class FoneParamStr(FoneParamBase):
         return n
 
 
-class FoneNumericParam(object):
+class FoneNumericParam(FoneParamBase):
     def __init__(self, name, default=None, min=None, max=None):
         self.__min = min
         self.__max = max
@@ -104,11 +104,11 @@ class FoneNumericParam(object):
     def max(self):
         return self.__max
 
-    def isValid(self):
-        if self.__min is not None and v < self.__min:
+    def isValid(self, value):
+        if self.__min is not None and value < self.__min:
             return False
 
-        if self.__max is not None and v > self.__max:
+        if self.__max is not None and value > self.__max:
             return False
 
         return True
@@ -145,10 +145,7 @@ class FoneParamFloat(FoneNumericParam):
         return FoneParamTypeFloat
 
     def isValid(self, value):
-        if not isinstance(value, int):
-            return False
-
-        if isinstance(value, bool):
+        if not isinstance(value, float):
             return False
 
         return super(FoneParamFloat, self).isValid(value)
