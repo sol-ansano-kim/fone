@@ -8,17 +8,13 @@ FoneParamTypeStr = 3
 
 
 class FoneParamBase(object):
-    def __init__(self, name, default):
+    def __init__(self, default):
         super(FoneParamBase, self).__init__()
-        self.__name = name
         self.__value = None
         self.__default = None
 
         self.set(default)
         self.__default = self.__value
-
-    def name(self):
-        return self.__name
 
     def default(self):
         return self.__default
@@ -43,8 +39,8 @@ class FoneParamBase(object):
 
 
 class FoneParamBool(FoneParamBase):
-    def __init__(self, name, default=False):
-        super(FoneParamBool, self).__init__(name, default)
+    def __init__(self, default=False):
+        super(FoneParamBool, self).__init__(default)
 
     def type(self):
         return FoneParamTypeBool
@@ -53,18 +49,18 @@ class FoneParamBool(FoneParamBase):
         return isinstance(value, bool)
 
     def copy(self):
-        n = FoneParamBool(self.name(), self.default())
+        n = FoneParamBool(self.default())
         n.set(self.get())
 
         return n
 
 
 class FoneParamStr(FoneParamBase):
-    def __init__(self, name, default="", valueList=None, enforceValueList=False):
+    def __init__(self, default="", valueList=None, enforceValueList=False):
         self.__value_list = list(valueList) if isinstance(valueList, (list, tuple, set)) else []
         self.__enforce_value_list = enforceValueList if self.__value_list else False
 
-        super(FoneParamStr, self).__init__(name, default)
+        super(FoneParamStr, self).__init__(default)
 
     def type(self):
         return FoneParamTypeStr
@@ -85,18 +81,18 @@ class FoneParamStr(FoneParamBase):
         return True
 
     def copy(self):
-        n = FoneParamStr(self.name(), default=self.default(), valueList=self.__value_list, enforceValueList=self.__enforce_value_list)
+        n = FoneParamStr(default=self.default(), valueList=self.__value_list, enforceValueList=self.__enforce_value_list)
         n.set(self.get())
 
         return n
 
 
 class FoneNumericParam(FoneParamBase):
-    def __init__(self, name, default=None, min=None, max=None):
+    def __init__(self, default=None, min=None, max=None):
         self.__min = min
         self.__max = max
 
-        super(FoneNumericParam, self).__init__(name, default)
+        super(FoneNumericParam, self).__init__(default)
 
     def min(self):
         return self.__min
@@ -114,15 +110,15 @@ class FoneNumericParam(FoneParamBase):
         return True
 
     def copy(self):
-        n = self.__class__(self.name(), default=self.default(), min=self.__min, max=self.__max)
+        n = self.__class__(default=self.default(), min=self.__min, max=self.__max)
         n.set(self.get())
 
         return n
 
 
 class FoneParamInt(FoneNumericParam):
-    def __init__(self, name, default=0, min=None, max=None):
-        super(FoneParamInt, self).__init__(name, default=default, min=min, max=max)
+    def __init__(self, default=0, min=None, max=None):
+        super(FoneParamInt, self).__init__(default=default, min=min, max=max)
 
     def type(self):
         return FoneParamTypeInt
@@ -138,8 +134,8 @@ class FoneParamInt(FoneNumericParam):
 
 
 class FoneParamFloat(FoneNumericParam):
-    def __init__(self, name, default=0.0, min=None, max=None):
-        super(FoneParamFloat, self).__init__(name, default=default, min=min, max=max)
+    def __init__(self, default=0.0, min=None, max=None):
+        super(FoneParamFloat, self).__init__(default=default, min=min, max=max)
 
     def type(self):
         return FoneParamTypeFloat

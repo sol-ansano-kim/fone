@@ -17,10 +17,9 @@ class ParamTest(unittest.TestCase):
             cls.exceptions = exceptions
 
     def test_bool(self):
-        b1 = self.param.FoneParamBool("bool1")
+        b1 = self.param.FoneParamBool()
         self.assertIsNotNone(b1)
         self.assertEqual(b1.type(), self.param.FoneParamTypeBool)
-        self.assertEqual(b1.name(), "bool1")
         self.assertEqual(b1.default(), False)
         self.assertEqual(b1.get(), False)
         b1.set(True)
@@ -35,7 +34,6 @@ class ParamTest(unittest.TestCase):
 
         b2 = b1.copy()
         b2.set(False)
-        self.assertEqual(b2.name(), "bool1")
         self.assertNotEqual(b2.get(), b1.get())
         self.assertEqual(b2.get(), False)
         self.assertEqual(b2.default(), False)
@@ -46,8 +44,7 @@ class ParamTest(unittest.TestCase):
         self.assertTrue(b2.isValid(True))
         self.assertTrue(b2.isValid(False))
 
-        b3 = self.param.FoneParamBool("bool2", default=True)
-        self.assertEqual(b3.name(), "bool2")
+        b3 = self.param.FoneParamBool(default=True)
         self.assertEqual(b3.default(), True)
         self.assertEqual(b3.get(), True)
 
@@ -59,10 +56,9 @@ class ParamTest(unittest.TestCase):
             b1.set("on")
 
     def test_int(self):
-        i1 = self.param.FoneParamInt("int1")
+        i1 = self.param.FoneParamInt()
         self.assertIsNotNone(i1)
         self.assertEqual(i1.type(), self.param.FoneParamTypeInt)
-        self.assertEqual(i1.name(), "int1")
         self.assertEqual(i1.default(), 0)
         self.assertEqual(i1.get(), 0)
         i1.set(123)
@@ -86,8 +82,7 @@ class ParamTest(unittest.TestCase):
         self.assertTrue(i2.isValid(4))
         self.assertTrue(i2.isValid(-1))
 
-        i3 = self.param.FoneParamInt("int2", default=789)
-        self.assertEqual(i3.name(), "int2")
+        i3 = self.param.FoneParamInt(default=789)
         self.assertEqual(i3.default(), 789)
         self.assertEqual(i3.get(), 789)
 
@@ -98,7 +93,7 @@ class ParamTest(unittest.TestCase):
         with self.assertRaises(self.exceptions.FoneInvalidParamValueError):
             i1.set("on")
 
-        i4 = self.param.FoneParamInt("int3", default=0, min=0, max=100)
+        i4 = self.param.FoneParamInt(default=0, min=0, max=100)
         self.assertFalse(i4.isValid(-1))
         self.assertFalse(i4.isValid(101))
         self.assertTrue(i4.isValid(1))
@@ -111,10 +106,9 @@ class ParamTest(unittest.TestCase):
         self.assertEqual(i4.get(), 5)
 
     def test_float(self):
-        f1 = self.param.FoneParamFloat("float1")
+        f1 = self.param.FoneParamFloat()
         self.assertIsNotNone(f1)
         self.assertEqual(f1.type(), self.param.FoneParamTypeFloat)
-        self.assertEqual(f1.name(), "float1")
         self.assertEqual(f1.default(), 0.0)
         self.assertEqual(f1.get(), 0.0)
         f1.set(123.0)
@@ -138,8 +132,7 @@ class ParamTest(unittest.TestCase):
         self.assertTrue(f2.isValid(4.0))
         self.assertTrue(f2.isValid(-1.234))
 
-        f3 = self.param.FoneParamFloat("int2", default=789.0)
-        self.assertEqual(f3.name(), "int2")
+        f3 = self.param.FoneParamFloat(default=789.0)
         self.assertEqual(f3.default(), 789.0)
         self.assertEqual(f3.get(), 789.0)
 
@@ -150,7 +143,7 @@ class ParamTest(unittest.TestCase):
         with self.assertRaises(self.exceptions.FoneInvalidParamValueError):
             f1.set("on")
 
-        f4 = self.param.FoneParamFloat("int3", default=0.0, min=0.0, max=100.0)
+        f4 = self.param.FoneParamFloat(default=0.0, min=0.0, max=100.0)
         self.assertFalse(f4.isValid(-0.00001))
         self.assertFalse(f4.isValid(100.1))
         self.assertTrue(f4.isValid(1.0))
@@ -163,10 +156,9 @@ class ParamTest(unittest.TestCase):
         self.assertEqual(f4.get(), 5.0)
 
     def test_str(self):
-        s1 = self.param.FoneParamStr("str1")
+        s1 = self.param.FoneParamStr()
         self.assertIsNotNone(s1)
         self.assertEqual(s1.type(), self.param.FoneParamTypeStr)
-        self.assertEqual(s1.name(), "str1")
         self.assertEqual(s1.default(), "")
         self.assertEqual(s1.get(), "")
         s1.set("abc")
@@ -188,8 +180,7 @@ class ParamTest(unittest.TestCase):
         self.assertTrue(s1.isValid("123"))
         self.assertTrue(s1.isValid("abc"))
 
-        s3 = self.param.FoneParamStr("str2", default="ghi")
-        self.assertEqual(s3.name(), "str2")
+        s3 = self.param.FoneParamStr(default="ghi")
         self.assertEqual(s3.default(), "ghi")
         self.assertEqual(s3.get(), "ghi")
 
@@ -200,7 +191,7 @@ class ParamTest(unittest.TestCase):
         with self.assertRaises(self.exceptions.FoneInvalidParamValueError):
             s1.set(-0.123)
 
-        s4 = self.param.FoneParamStr("str3", default="a", valueList=["a", "b", "c"], enforceValueList=True)
+        s4 = self.param.FoneParamStr(default="a", valueList=["a", "b", "c"], enforceValueList=True)
         self.assertEqual(s4.valueList(), ["a", "b", "c"])
         self.assertFalse(s4.isValid("d"))
         self.assertFalse(s4.isValid("A"))
@@ -213,9 +204,9 @@ class ParamTest(unittest.TestCase):
         s4.set("b")
         self.assertEqual(s4.get(), "b")
         with self.assertRaises(self.exceptions.FoneInvalidParamValueError):
-            self.param.FoneParamStr("str4", default="A", valueList=["a", "b", "c"], enforceValueList=True)
+            self.param.FoneParamStr(default="A", valueList=["a", "b", "c"], enforceValueList=True)
 
-        s5 = self.param.FoneParamStr("str4", default="a", valueList=["a", "b", "c"], enforceValueList=False)
+        s5 = self.param.FoneParamStr(default="a", valueList=["a", "b", "c"], enforceValueList=False)
         self.assertEqual(s5.valueList(), ["a", "b", "c"])
         self.assertTrue(s5.isValid("d"))
         self.assertTrue(s5.isValid("A"))
