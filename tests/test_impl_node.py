@@ -14,9 +14,11 @@ class ImplNode(unittest.TestCase):
         finally:
             from fone.impl import _node
             from fone.core import op
+            from fone.core import param
             from fone import exceptions
             cls._node = _node
             cls.exceptions = exceptions
+            cls.param = param
 
         class OneInputs(op.FoneOp):
             def __init__(self):
@@ -24,6 +26,9 @@ class ImplNode(unittest.TestCase):
 
             def type(self):
                 return self.__class__.__name__
+
+            def params(self):
+                return {}
 
             def requiredInputs(self):
                 return 1
@@ -38,6 +43,9 @@ class ImplNode(unittest.TestCase):
             def type(self):
                 return self.__class__.__name__
 
+            def params(self):
+                return {}
+
             def requiredInputs(self):
                 return 0
 
@@ -51,15 +59,40 @@ class ImplNode(unittest.TestCase):
             def type(self):
                 return self.__class__.__name__
 
+            def params(self):
+                return {}
+
             def requiredInputs(self):
                 return 2
 
             def generateOutput(self):
                 return False
 
+        class ParamTester(op.FoneOp):
+            def __init__(self):
+                super(ParamTester, self).__init__()
+
+            def type(self):
+                return self.__class__.__name__
+
+            def params(self):
+                return {
+                    "int": cls.param.FoneParamInt(),
+                    "bool": cls.param.FoneParamBool(),
+                    "float": cls.param.FoneParamFloat(),
+                    "str": cls.param.FoneParamStr(),
+                }
+
+            def requiredInputs(self):
+                return 0
+
+            def generateOutput(self):
+                return True
+
         cls.OneInputs = OneInputs
         cls.ZeroInputs = ZeroInputs
         cls.TwoInputs = TwoInputs
+        cls.ParamTester = ParamTester
 
     def test_op(self):
         i0 = self.ZeroInputs()
@@ -148,3 +181,25 @@ class ImplNode(unittest.TestCase):
         i1.disconnectAllInputs()
         self.assertEqual(len(i02.outputs()), 0)
         self.assertEqual(len([x for x in i1.inputs() if x]), 0)
+
+    def test_params(self):
+        pt = self.ParamTester()
+        pt1 = self._node._FoneNodeImpl(pt, None)
+        self.assertEqual(sorted(pt1.paramNames()), ["bool", "float", "int", "str"])
+        bp = pt1.getParam("bool")
+        self.assertEqual(bp.get(), pt1.getParamValue("bool"))
+        self.assertFalse(pt1.getParamValue("bool"))
+        bp.set(True)
+        self.assertTrue(bp.get())
+        self.assertNotEqual(bp.get(), pt1.getParamValue("bool"))
+        self.assertFalse(pt1.getParamValue("bool"))
+        self.assertIsNone(pt1.getParam("Abc"))
+        self.assertEqual(pt1.getParamValue("int"), 0)
+        pt1.setParamValue("int", 1)
+        self.assertEqual(pt1.getParamValue("int"), 1)
+        ip = pt1.getParam("int")
+        self.assertEqual(ip.get(), pt1.getParamValue("int"))
+        pt1.setParamValue("int", 2)
+        self.assertNotEqual(ip.get(), pt1.getParamValue("int"))
+        ip.set(2)
+        self.assertEqual(ip.get(), pt1.getParamValue("int"))

@@ -9,7 +9,10 @@ class _FoneNodeImpl(object):
         self.__op = op
         self.__node = node
         self.__inputs = [None] * self.__op.requiredInputs()
+        self.__params = {}
         self.__outputs = set()
+        for k, v in self.__op.params().items():
+            self.__params[k] = v.copy()
 
     def __hash__(self):
         return self.__id.int
@@ -28,6 +31,22 @@ class _FoneNodeImpl(object):
 
     def type(self):
         return self.__op.type()
+
+    def paramNames(self):
+        return sorted(self.__params.keys())
+
+    def getParam(self, name):
+        p = self.__params.get(name, None)
+        if p is None:
+            return None
+
+        return p.copy()
+
+    def getParamValue(self, name):
+        return self.__params[name].get()
+
+    def setParamValue(self, name, value):
+        self.__params[name].set(value)
 
     def requiredInputs(self):
         return self.__op.requiredInputs()
