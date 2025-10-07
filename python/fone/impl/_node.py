@@ -8,7 +8,7 @@ class _FoneNodeImpl(object):
         self.__id = uuid.uuid4()
         self.__op = op
         self.__node = node
-        self.__inputs = [None] * self.__op.requiredInputs()
+        self.__inputs = [None] * self.__op.needs()
         self.__params = {}
         self.__outputs = set()
         for k, v in self.__op.params().items():
@@ -48,11 +48,11 @@ class _FoneNodeImpl(object):
     def setParamValue(self, name, value):
         self.__params[name].set(value)
 
-    def requiredInputs(self):
-        return self.__op.requiredInputs()
+    def needs(self):
+        return self.__op.needs()
 
-    def generateOutput(self):
-        return self.__op.generateOutput()
+    def packetable(self):
+        return self.__op.packetable()
 
     def inputs(self):
         return self.__inputs[:]
@@ -64,7 +64,7 @@ class _FoneNodeImpl(object):
         if nodeImpl in self.__outputs:
             return False
 
-        if not self.__op.generateOutput():
+        if not self.__op.packetable():
             return False
 
         self.__outputs.add(nodeImpl)
@@ -80,10 +80,10 @@ class _FoneNodeImpl(object):
         return True
 
     def connectInput(self, index, nodeImpl):
-        if index >= self.__op.requiredInputs():
-            raise exceptions.FoneIndexError(index, self.__op.requiredInputs())
+        if index >= self.__op.needs():
+            raise exceptions.FoneIndexError(index, self.__op.needs())
 
-        if not nodeImpl.generateOutput():
+        if not nodeImpl.packetable():
             return False
 
         _org = None
@@ -99,8 +99,8 @@ class _FoneNodeImpl(object):
         return True
 
     def disconnectInput(self, index):
-        if index >= self.__op.requiredInputs():
-            raise exceptions.FoneIndexError(index, self.__op.requiredInputs())
+        if index >= self.__op.needs():
+            raise exceptions.FoneIndexError(index, self.__op.needs())
 
         if self.__inputs[index] is None:
             return False
@@ -114,7 +114,7 @@ class _FoneNodeImpl(object):
         return True
 
     def disconnectAllInputs(self):
-        for i in range(self.__op.requiredInputs()):
+        for i in range(self.__op.needs()):
             self.disconnectInput(i)
 
         return True

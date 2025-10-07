@@ -8,11 +8,11 @@ class FoneOp(object):
     def type(self):
         raise exceptions.FoneNotImplementedError(self, "type")
 
-    def requiredInputs(self):
-        raise exceptions.FoneNotImplementedError(self, "requiredInputs")
+    def needs(self):
+        raise exceptions.FoneNotImplementedError(self, "needs")
 
     def params(self):
         raise exceptions.FoneNotImplementedError(self, "params")
 
-    def generateOutput(self):
-        raise exceptions.FoneNotImplementedError(self, "generateOutput")
+    def packetable(self):
+        raise exceptions.FoneNotImplementedError(self, "packetable")

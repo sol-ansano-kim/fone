@@ -30,10 +30,10 @@ class ImplNode(unittest.TestCase):
             def params(self):
                 return {}
 
-            def requiredInputs(self):
+            def needs(self):
                 return 1
 
-            def generateOutput(self):
+            def packetable(self):
                 return True
 
         class ZeroInputs(op.FoneOp):
@@ -46,10 +46,10 @@ class ImplNode(unittest.TestCase):
             def params(self):
                 return {}
 
-            def requiredInputs(self):
+            def needs(self):
                 return 0
 
-            def generateOutput(self):
+            def packetable(self):
                 return True
 
         class TwoInputs(op.FoneOp):
@@ -62,10 +62,10 @@ class ImplNode(unittest.TestCase):
             def params(self):
                 return {}
 
-            def requiredInputs(self):
+            def needs(self):
                 return 2
 
-            def generateOutput(self):
+            def packetable(self):
                 return False
 
         class ParamTester(op.FoneOp):
@@ -83,10 +83,10 @@ class ImplNode(unittest.TestCase):
                     "str": cls.param.FoneParamStr(),
                 }
 
-            def requiredInputs(self):
+            def needs(self):
                 return 0
 
-            def generateOutput(self):
+            def packetable(self):
                 return True
 
         cls.OneInputs = OneInputs
@@ -107,13 +107,13 @@ class ImplNode(unittest.TestCase):
         self.assertEqual(i1.type(), "OneInputs")
         self.assertEqual(i2.type(), "TwoInputs")
 
-        self.assertEqual(i0.requiredInputs(), 0)
-        self.assertEqual(i1.requiredInputs(), 1)
-        self.assertEqual(i2.requiredInputs(), 2)
+        self.assertEqual(i0.needs(), 0)
+        self.assertEqual(i1.needs(), 1)
+        self.assertEqual(i2.needs(), 2)
 
-        self.assertTrue(i0.generateOutput())
-        self.assertTrue(i1.generateOutput())
-        self.assertFalse(i2.generateOutput())
+        self.assertTrue(i0.packetable())
+        self.assertTrue(i1.packetable())
+        self.assertFalse(i2.packetable())
 
     def test_connect(self):
         i0 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
