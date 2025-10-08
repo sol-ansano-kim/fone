@@ -7,6 +7,15 @@ class FoneNode(object):
         super(FoneNode, self).__init__()
         self.__impl = _node._FoneNodeImpl(op, self)
 
+    def __hash__(self):
+        return self.__impl.__hash__()
+
+    def __eq__(self, other):
+        return isinstance(other, FoneNode) and other.__impl == self.__impl
+
+    def __neq__(self, other):
+        return not self.__eq__(other)
+
     def type(self):
         return self.__impl.type()
 
