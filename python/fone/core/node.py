@@ -39,9 +39,9 @@ class FoneNode(object):
 
     def outputs(self):
         oupts = []
-        for o in self.__impl.inputs():
+        for o in self.__impl.outputs():
             if o is not None:
-                o = i.node()
+                o = o.node()
             oupts.append(o)
 
         return oupts
@@ -52,5 +52,5 @@ class FoneNode(object):
     def disconnect(self, index=0):
         return self.__impl.disconnectInput(index)
 
-    def disconnectAllInputs(self):
+    def disconnectAll(self):
         return self.__impl.disconnectAllInputs()
