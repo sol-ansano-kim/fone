@@ -67,6 +67,22 @@ class ImplNode(unittest.TestCase):
             def packetable(self):
                 return False
 
+        class TwoInputsPacketable(op.FoneOp):
+            def __init__(self):
+                super(TwoInputsPacketable, self).__init__()
+
+            def type(self):
+                return self.__class__.__name__
+
+            def params(self):
+                return {}
+
+            def needs(self):
+                return 2
+
+            def packetable(self):
+                return True
+
         class ParamTester(op.FoneOp):
             def __init__(self):
                 super(ParamTester, self).__init__()
@@ -92,6 +108,7 @@ class ImplNode(unittest.TestCase):
         cls.ZeroInputs = ZeroInputs
         cls.TwoInputs = TwoInputs
         cls.ParamTester = ParamTester
+        cls.TwoInputsPacketable = TwoInputsPacketable
 
     def test_op(self):
         i0 = self.ZeroInputs()
@@ -156,6 +173,7 @@ class ImplNode(unittest.TestCase):
         i01 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
         i02 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
         i1 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        i11 = self._node._FoneNodeImpl(self.OneInputs(), None)
         i2 = self._node._FoneNodeImpl(self.TwoInputs(), None)
 
         self.assertTrue(i1.connectInput(0, i01))
@@ -167,11 +185,11 @@ class ImplNode(unittest.TestCase):
         self.assertEqual(len(i01.outputs()), 0)
         self.assertEqual(len(i02.outputs()), 1)
 
-        i2.connectInput(0, i02)
-        i2.connectInput(1, i1)
-        self.assertEqual(len([x for x in i1.inputs() if x]), 1)
+        self.assertTrue(i2.connectInput(0, i02))
+        self.assertTrue(i2.connectInput(1, i11))
+        self.assertEqual(len([x for x in i11.inputs() if x]), 1)
         self.assertEqual(len(i02.outputs()), 2)
-        self.assertEqual(len(i1.outputs()), 1)
+        self.assertEqual(len(i11.outputs()), 1)
 
         i2.disconnectAllInputs()
         self.assertEqual(len([x for x in i2.inputs() if x]), 0)
@@ -202,3 +220,26 @@ class ImplNode(unittest.TestCase):
         self.assertNotEqual(ip.get(), pt1.getParamValue("int"))
         ip.set(2)
         self.assertEqual(ip.get(), pt1.getParamValue("int"))
+
+    def test_cycle(self):
+        one1 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        one2 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        one3 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        self.assertTrue(one1.connectInput(0, one2))
+        self.assertFalse(one2.connectInput(0, one1))
+        self.assertTrue(one2.connectInput(0, one3))
+        self.assertFalse(one3.connectInput(0, one1))
+
+        two1 = self._node._FoneNodeImpl(self.TwoInputsPacketable(), None)
+        two2 = self._node._FoneNodeImpl(self.TwoInputsPacketable(), None)
+        one1 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        one2 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        one3 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        self.assertTrue(one1.connectInput(0, two1))
+        self.assertFalse(two1.connectInput(0, one1))
+        self.assertFalse(two1.connectInput(1, one1))
+        self.assertTrue(two1.connectInput(0, two2))
+        self.assertTrue(two1.connectInput(1, two2))
+        self.assertTrue(two2.connectInput(0, one2))
+        self.assertTrue(two2.connectInput(0, one2))
+        self.assertFalse(one2.connectInput(0, one1))

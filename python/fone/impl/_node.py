@@ -79,11 +79,35 @@ class _FoneNodeImpl(object):
 
         return True
 
+    def _make_cycle(self, srcNodeImpl):
+        checked = set()
+        cur = [srcNodeImpl]
+
+        while (cur):
+            next = []
+
+            for c in cur:
+                if str(srcNodeImpl.id()) in checked:
+                    return True
+
+                checked.add(str(c.id()))
+
+                for inp in c.inputs():
+                    if inp is not None and inp not in next:
+                        next.append(inp)
+
+            cur = next
+
+        return False
+
     def connectInput(self, index, nodeImpl):
         if index >= self.__op.needs():
             raise exceptions.FoneIndexError(index, self.__op.needs())
 
         if not nodeImpl.packetable():
+            return False
+
+        if self._make_cycle(nodeImpl):
             return False
 
         _org = None
