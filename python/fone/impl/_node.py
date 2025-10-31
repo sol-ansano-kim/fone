@@ -80,23 +80,18 @@ class _FoneNodeImpl(object):
         return True
 
     def _make_cycle(self, srcNodeImpl):
-        checked = set()
-        cur = [srcNodeImpl]
+        srcid = srcNodeImpl.id()
 
-        while (cur):
-            next = []
-
-            for c in cur:
-                if str(srcNodeImpl.id()) in checked:
+        curs = list(self.__outputs)
+        while (curs):
+            nexts = []
+            for cur in curs:
+                if cur.id() == srcid:
                     return True
 
-                checked.add(str(c.id()))
+                nexts.extend(cur.outputs())
 
-                for inp in c.inputs():
-                    if inp is not None and inp not in next:
-                        next.append(inp)
-
-            cur = next
+            curs = nexts
 
         return False
 
