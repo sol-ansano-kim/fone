@@ -186,8 +186,9 @@ class ImplNode(unittest.TestCase):
         self.assertEqual(len(i02.outputs()), 1)
 
         self.assertTrue(i2.connectInput(0, i02))
+        self.assertEqual(len([x for x in i2.inputs() if x]), 1)
         self.assertTrue(i2.connectInput(1, i11))
-        self.assertEqual(len([x for x in i11.inputs() if x]), 1)
+        self.assertEqual(len([x for x in i2.inputs() if x]), 2)
         self.assertEqual(len(i02.outputs()), 2)
         self.assertEqual(len(i11.outputs()), 1)
 
