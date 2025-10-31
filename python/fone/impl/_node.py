@@ -1,4 +1,5 @@
 import uuid
+from ..core import param
 from .. import exceptions
 
 
@@ -9,10 +10,8 @@ class _FoneNodeImpl(object):
         self.__op = op
         self.__node = node
         self.__inputs = [None] * self.__op.needs()
-        self.__params = {}
+        self.__params = param.FoneParams(self.__op.params())
         self.__outputs = set()
-        for k, v in self.__op.params().items():
-            self.__params[k] = v.copy()
 
     def __hash__(self):
         return self.__id.int
@@ -33,20 +32,16 @@ class _FoneNodeImpl(object):
         return self.__op.type()
 
     def paramNames(self):
-        return sorted(self.__params.keys())
+        return self.__params.keys()
 
     def getParam(self, name):
-        p = self.__params.get(name, None)
-        if p is None:
-            return None
+        return self.__params.getParam(name)
 
-        return p.copy()
-
-    def getParamValue(self, name):
-        return self.__params[name].get()
+    def getParamValue(self, name, default=None):
+        return self.__params.get(name, default=default)
 
     def setParamValue(self, name, value):
-        self.__params[name].set(value)
+        self.__params.set(name, value)
 
     def needs(self):
         return self.__op.needs()

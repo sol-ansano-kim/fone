@@ -154,18 +154,24 @@ class FoneParams(object):
         for key, param in param_dict.items():
             self.__params[key] = param.copy()
 
-    def get(self, key, default=None):
-        if key in self.__params:
-            return self.__params[key].get()
+    def getParam(self, key):
+        if key not in self.__params:
+            return None
 
-        return default
+        return self.__params[key].copy()
+
+    def get(self, key, default=None):
+        if key not in self.__params:
+            return default
+
+        return self.__params[key].get()
 
     def set(self, key, value):
-        if key in self.__params:
-            self.__params[key].set(value)
-            return True
+        if key not in self.__params:
+            return False
 
-        return False
+        self.__params[key].set(value)
+        return True
 
     def keys(self):
         return sorted(self.__params.keys())

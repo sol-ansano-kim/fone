@@ -25,8 +25,8 @@ class FoneNode(object):
     def getParam(self, name):
         return self.__impl.getParam(name)
 
-    def getParamValue(self, name):
-        return self.__impl.getParamValue(name)
+    def getParamValue(self, name, default=None):
+        return self.__impl.getParamValue(name, default=default)
 
     def setParamValue(self, name, value):
         self.__impl.setParamValue(name, value)
