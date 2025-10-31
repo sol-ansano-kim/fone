@@ -63,3 +63,6 @@ class FoneNode(object):
 
     def disconnectAll(self):
         return self.__impl.disconnectAllInputs()
+
+    def operate(self, packetArray):
+        return self.__impl.operate(packetArray)

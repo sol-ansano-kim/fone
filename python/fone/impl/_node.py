@@ -132,3 +132,6 @@ class _FoneNodeImpl(object):
             self.disconnectInput(i)
 
         return True
+
+    def operate(self, packetArray):
+        return self.__op.operate(self.__params.copy(), packetArray)
