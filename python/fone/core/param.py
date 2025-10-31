@@ -154,6 +154,13 @@ class FoneParams(object):
         for key, param in param_dict.items():
             self.__params[key] = param.copy()
 
+    def copy(self):
+        nparm = {}
+        for key, param in self.__params.items():
+            nparm[key] = param.copy()
+
+        return FoneParams(nparm)
+
     def getParam(self, key):
         if key not in self.__params:
             return None

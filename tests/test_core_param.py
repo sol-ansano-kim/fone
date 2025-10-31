@@ -260,3 +260,15 @@ class ParamTest(unittest.TestCase):
         self.assertEqual(params.get("float", 1), 0)
         self.assertEqual(params.get("float2"), None)
         self.assertEqual(params.get("float2", 1), 1)
+
+        cparams = params.copy()
+        self.assertEqual(cparams.get("bool"), params.get("bool"))
+        self.assertEqual(cparams.get("int"), params.get("int"))
+        self.assertEqual(cparams.get("float"), params.get("float"))
+        self.assertEqual(cparams.get("str"), params.get("str"))
+
+        cparams.set("float", 1.2)
+        self.assertEqual(cparams.get("bool"), params.get("bool"))
+        self.assertEqual(cparams.get("int"), params.get("int"))
+        self.assertNotEqual(cparams.get("float"), params.get("float"))
+        self.assertEqual(cparams.get("str"), params.get("str"))
