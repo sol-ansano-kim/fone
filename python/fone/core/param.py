@@ -145,3 +145,27 @@ class FoneParamFloat(FoneNumericParam):
             return False
 
         return super(FoneParamFloat, self).isValid(value)
+
+
+class FoneParams(object):
+    def __init__(self, param_dict):
+        super(FoneParams).__init__()
+        self.__params = {}
+        for key, param in param_dict.items():
+            self.__params[key] = param.copy()
+
+    def get(self, key, default=None):
+        if key in self.__params:
+            return self.__params[key].get()
+
+        return default
+
+    def set(self, key, value):
+        if key in self.__params:
+            self.__params[key].set(value)
+            return True
+
+        return False
+
+    def keys(self):
+        return sorted(self.__params.keys())

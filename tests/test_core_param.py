@@ -213,3 +213,50 @@ class ParamTest(unittest.TestCase):
         self.assertTrue(s5.isValid("b"))
         s5.set("any")
         self.assertEqual(s5.get(), "any")
+
+    def test_params(self):
+        params = self.param.FoneParams({})
+        self.assertIsNotNone(params)
+        self.assertEqual(params.keys(), [])
+        test = {
+            "bool": self.param.FoneParamBool(),
+            "int": self.param.FoneParamInt(),
+            "float": self.param.FoneParamFloat(),
+            "str": self.param.FoneParamStr()
+        }
+
+        params = self.param.FoneParams(test)
+        self.assertEqual(len(params.keys()), 4)
+        test.pop("str")
+        self.assertEqual(len(test.keys()), 3)
+        self.assertEqual(len(params.keys()), 4)
+
+        test = {
+            "bool": self.param.FoneParamBool(),
+            "int": self.param.FoneParamInt(),
+            "float": self.param.FoneParamFloat(),
+            "str": self.param.FoneParamStr()
+        }
+
+        params = self.param.FoneParams(test)
+        self.assertEqual(test["bool"].get(), params.get("bool"))
+        self.assertEqual(test["int"].get(), params.get("int"))
+        self.assertEqual(test["float"].get(), params.get("float"))
+        self.assertEqual(test["str"].get(), params.get("str"))
+
+        self.assertFalse(test["bool"].get())
+        test["bool"].set(True)
+        self.assertTrue(test["bool"].get())
+        self.assertFalse(params.get("bool"))
+        self.assertTrue(params.set("bool", True))
+        self.assertEqual(test["bool"].get(), params.get("bool"))
+
+        self.assertTrue(params.set("int", 2))
+        self.assertNotEqual(test["int"].get(), params.get("int"))
+        test["int"].set(2)
+        self.assertEqual(test["int"].get(), params.get("int"))
+
+        self.assertEqual(params.get("float"), 0)
+        self.assertEqual(params.get("float", 1), 0)
+        self.assertEqual(params.get("float2"), None)
+        self.assertEqual(params.get("float2", 1), 1)
