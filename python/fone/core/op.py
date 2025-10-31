@@ -17,5 +17,5 @@ class FoneOp(object):
     def packetable(self):
         raise exceptions.FoneNotImplementedError(self, "packetable")
 
-    def operate(self, packetArray):
+    def operate(self, params, packetArray):
         raise exceptions.FoneNotImplementedError(self, "operate")
