@@ -1,4 +1,5 @@
 import unittest
+import numpy as np
 
 
 class CoreNode(unittest.TestCase):
@@ -14,10 +15,12 @@ class CoreNode(unittest.TestCase):
             from fone.core import node
             from fone.core import op
             from fone.core import param
+            from fone.core import packet
             from fone import exceptions
             cls.node = node
             cls.exceptions = exceptions
             cls.param = param
+            cls.packet = packet
 
         class OneInputs(op.FoneOp):
             def __init__(self):
@@ -88,10 +91,55 @@ class CoreNode(unittest.TestCase):
             def packetable(self):
                 return True
 
+        class PlusOp(op.FoneOp):
+            def __init__(self):
+                super(PlusOp, self).__init__()
+
+            def type(self):
+                return "Plus"
+
+            def params(self):
+                return {
+                    "num": cls.param.FoneParamFloat()
+                }
+
+            def needs(self):
+                return 1
+
+            def packetable(self):
+                return True
+
+            def operate(self, params, packetArray):
+                return CoreNode.packet.FonePacket(data=packetArray.packet(0).data() + params.get("num"))
+
+        class MakeNums(op.FoneOp):
+            def __init__(self):
+                super(MakeNums, self).__init__()
+
+            def type(self):
+                return "Make"
+
+            def params(self):
+                return {
+                    "count": cls.param.FoneParamInt(min=0),
+                    "num": cls.param.FoneParamFloat()
+                }
+
+            def needs(self):
+                return 0
+
+            def packetable(self):
+                return True
+
+            def operate(self, params, packetArray):
+                return CoreNode.packet.FonePacket(data=np.array([params.get("num")] * params.get("count")))
+
         cls.OneInputs = OneInputs
         cls.ZeroInputs = ZeroInputs
         cls.TwoInputs = TwoInputs
         cls.ParamTester = ParamTester
+        cls.PlusOp = PlusOp
+        cls.MakeNums = MakeNums
 
     def test_params(self):
         ptop = self.ParamTester()
@@ -181,3 +229,39 @@ class CoreNode(unittest.TestCase):
         i1.disconnectAll()
         self.assertEqual(len(i02.outputs()), 0)
         self.assertEqual(len([x for x in i1.inputs() if x]), 0)
+
+    def test_operaion(self):
+        op_plus = self.PlusOp()
+        op_make = self.MakeNums()
+        node_plus = self.node.FoneNode(op_plus)
+        node_make = self.node.FoneNode(op_make)
+        pck = node_make.operate(self.packet.FonePacketArray([]))
+        self.assertIsNotNone(pck)
+        self.assertEqual(len(pck.data()), 0)
+
+        node_make.setParamValue("count", 2)
+        pck2 = node_make.operate(self.packet.FonePacketArray([]))
+        self.assertEqual(len(pck2.data()), 2)
+        self.assertEqual(pck2.data()[0], pck2.data()[1])
+        self.assertEqual(pck2.data()[0], 0)
+
+        node_make.setParamValue("num", 1.0)
+        node_make.setParamValue("count", 3)
+        pck3 = node_make.operate(self.packet.FonePacketArray([]))
+        self.assertEqual(len(pck3.data()), 3)
+        self.assertEqual(pck3.data()[0], pck3.data()[1])
+        self.assertEqual(pck3.data()[0], pck3.data()[2])
+        self.assertEqual(pck3.data()[0], 1.0)
+
+        ppck = node_plus.operate(self.packet.FonePacketArray([pck3]))
+        self.assertEqual(len(ppck.data()), 3)
+        self.assertEqual(ppck.data()[0], ppck.data()[1])
+        self.assertEqual(ppck.data()[0], ppck.data()[2])
+        self.assertEqual(ppck.data()[0], 1.0)
+
+        node_plus.setParamValue("num", 3.5)
+        ppck = node_plus.operate(self.packet.FonePacketArray([pck3]))
+        self.assertEqual(len(ppck.data()), 3)
+        self.assertEqual(ppck.data()[0], ppck.data()[1])
+        self.assertEqual(ppck.data()[0], ppck.data()[2])
+        self.assertEqual(ppck.data()[0], 4.5)
