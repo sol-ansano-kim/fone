@@ -8,18 +8,18 @@ from . import op
 RE_PY = re.compile(r"\.py$", re.IGNORECASE)
 
 
-class NodeManager(object):
+class FoneNodeManager(object):
     __INSTANCE = None
 
     def __new__(self):
-        if NodeManager.__INSTANCE is None:
-            NodeManager.__INSTANCE = super(NodeManager, self).__new__(self)
-            NodeManager.__INSTANCE.__initialize()
+        if FoneNodeManager.__INSTANCE is None:
+            FoneNodeManager.__INSTANCE = super(FoneNodeManager, self).__new__(self)
+            FoneNodeManager.__INSTANCE.__initialize()
 
-        return NodeManager.__INSTANCE
+        return FoneNodeManager.__INSTANCE
 
     def __init__(self):
-        super(NodeManager, self).__init__()
+        super(FoneNodeManager, self).__init__()
 
     def __initialize(self):
         self.__plugins = {}
