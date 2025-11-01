@@ -5,8 +5,9 @@ class FoneOp(object):
     def __init__(self):
         super(FoneOp, self).__init__()
 
-    def type(self):
-        raise exceptions.FoneNotImplementedError(self, "type")
+    @classmethod
+    def type(cls):
+        return cls.__name__
 
     def needs(self):
         raise exceptions.FoneNotImplementedError(self, "needs")
