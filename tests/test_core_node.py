@@ -12,6 +12,7 @@ class CoreNode(unittest.TestCase):
             import os
             sys.path.append((os.path.abspath(os.path.join(__file__, "../../python"))))
         finally:
+            from fone.core import abst
             from fone.core import node
             from fone.core import op
             from fone.core import param
@@ -21,6 +22,13 @@ class CoreNode(unittest.TestCase):
             cls.exceptions = exceptions
             cls.param = param
             cls.packet = packet
+
+        class DummyScene(abst._SceneBase):
+            def __init__(self):
+                super(DummyScene)
+
+            def getUniqueName(self, name):
+                return name
 
         class OneInputs(op.FoneOp):
             def __init__(self):

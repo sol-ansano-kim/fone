@@ -1,7 +1,8 @@
+from . import abst
 from .. import exceptions
 
 
-class FoneOp(object):
+class FoneOp(abst._OpBase):
     def __init__(self):
         super(FoneOp, self).__init__()
 

@@ -1,3 +1,4 @@
+from . import abst
 from .. import exceptions
 
 
@@ -7,7 +8,7 @@ FoneParamTypeFloat = 2
 FoneParamTypeStr = 3
 
 
-class FoneParamBase(object):
+class FoneParamBase(abst._ParamBase):
     def __init__(self, default):
         super(FoneParamBase, self).__init__()
         self.__value = None

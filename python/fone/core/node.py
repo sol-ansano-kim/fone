@@ -1,8 +1,9 @@
 from .. import exceptions
 from ..impl import _node
+from . import abst
 
 
-class FoneNode(object):
+class FoneNode(abst._NodeBase):
     def __init__(self, op):
         super(FoneNode, self).__init__()
         self.__impl = _node._FoneNodeImpl(op, self)

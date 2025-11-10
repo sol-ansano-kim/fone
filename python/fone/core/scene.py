@@ -1,4 +1,5 @@
-class FoneScene(object):
+from . import abst
+class FoneScene(abst._SceneBase):
     __INSTANCE = None
 
     def __new__(self):

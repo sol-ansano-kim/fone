@@ -1,9 +1,10 @@
 import copy
 import numpy as np
+from . import abst
 from .. import exceptions
 
 
-class FonePacket(object):
+class FonePacket(abst._PacketBase):
     def __init__(self, metadata=None, data=None):
         super(FonePacket, self).__init__()
         self.__metadata = {}
@@ -29,7 +30,7 @@ class FonePacket(object):
         return self.__data.copy()
 
 
-class FonePacketArray(object):
+class FonePacketArray(abst._PacketArrayBase):
     def __init__(self, packets):
         super(FonePacketArray, self).__init__()
         if not isinstance(packets, list):
