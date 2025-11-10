@@ -5,14 +5,14 @@ class NodeManagerTest(unittest.TestCase):
     @classmethod
     def setUp(cls):
         try:
-            from fone.core import nodeManager
+            from fone.core import opManager
         except:
             import sys
             sys.path.append((os.path.abspath(os.path.join(__file__, "../../python"))))
         finally:
             import os
-            from fone.core import nodeManager
-            cls.nodeManager = nodeManager
+            from fone.core import opManager
+            cls.opManager = opManager
             cls.orgEnv = os.environ.get("FONE_PLUGIN_PATH")
             os.environ["FONE_PLUGIN_PATH"] = os.path.join(__file__, "../plugins")
 
@@ -26,9 +26,12 @@ class NodeManagerTest(unittest.TestCase):
             os.environ["FONE_PLUGIN_PATH"] = cls.orgEnv
 
     def test_singleton(self):
-        a = self.nodeManager.FoneNodeManager()
+        a = self.opManager.FoneOpManager()
         self.assertIsNotNone(a)
-        b = self.nodeManager.FoneNodeManager()
+        b = self.opManager.FoneOpManager()
         self.assertIsNotNone(a)
         self.assertEqual(a, b)
         self.assertEqual(id(a), id(b))
+
+    def test_load(self):
+        a = self.opManager.FoneOpManager()
