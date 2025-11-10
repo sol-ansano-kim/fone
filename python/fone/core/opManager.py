@@ -64,3 +64,9 @@ class FoneOpManager(object):
                         continue
 
                     self.__plugins[cls.type()] = cls
+
+    def listOps(self):
+        return sorted(self.__plugins.keys())
+
+    def getOp(self, opName):
+        return self.__plugins.get(opName)

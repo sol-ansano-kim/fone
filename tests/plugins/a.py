@@ -1,5 +1,5 @@
 from fone.core import op
 
 
-class MyOp(op.FoneOp):
+class MyOpA(op.FoneOp):
     pass

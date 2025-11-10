@@ -34,4 +34,11 @@ class NodeManagerTest(unittest.TestCase):
         self.assertEqual(id(a), id(b))
 
     def test_load(self):
-        a = self.opManager.FoneOpManager()
+        man = self.opManager.FoneOpManager()
+        self.assertEqual(man.listOps(), ["MyOpA", "MyOpB"])
+        op = man.getOp("MyOpA")
+        self.assertIsNotNone(op)
+        op = man.getOp("MyOpB")
+        self.assertIsNotNone(op)
+        op = man.getOp("MyOpC")
+        self.assertIsNone(op)
