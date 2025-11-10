@@ -148,10 +148,10 @@ class FoneParamFloat(FoneNumericParam):
 
 
 class FoneParams(object):
-    def __init__(self, param_dict):
+    def __init__(self, paramDict):
         super(FoneParams).__init__()
         self.__params = {}
-        for key, param in param_dict.items():
+        for key, param in paramDict.items():
             self.__params[key] = param.copy()
 
     def copy(self):

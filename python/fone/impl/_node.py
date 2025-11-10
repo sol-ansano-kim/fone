@@ -74,7 +74,7 @@ class _FoneNodeImpl(object):
 
         return True
 
-    def __make_cycle(self, srcNodeImpl):
+    def __makeCycle(self, srcNodeImpl):
         srcid = srcNodeImpl.id()
 
         curs = list(self.__outputs)
@@ -97,7 +97,7 @@ class _FoneNodeImpl(object):
         if not nodeImpl.packetable():
             return False
 
-        if self.__make_cycle(nodeImpl):
+        if self.__makeCycle(nodeImpl):
             return False
 
         _org = None

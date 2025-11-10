@@ -23,9 +23,9 @@ class FoneOpManager(object):
 
     def __initialize(self):
         self.__plugins = {}
-        self.reload_plugins()
+        self.reloadPlugins()
 
-    def reload_plugins(self):
+    def reloadPlugins(self):
         for path in os.environ.get("FONE_PLUGIN_PATH", "").split(os.pathsep):
             if not path:
                 continue
