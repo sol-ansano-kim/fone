@@ -274,3 +274,12 @@ class CoreNode(unittest.TestCase):
         self.assertEqual(ppck.data()[0], ppck.data()[1])
         self.assertEqual(ppck.data()[0], ppck.data()[2])
         self.assertEqual(ppck.data()[0], 4.5)
+
+    def test_methods(self):
+        mn = self.node.FoneNode(self.scene, self.MakeNums())
+        self.assertEqual(mn.name(), "Make")
+        mn = self.node.FoneNode(self.scene, self.MakeNums(), name="make")
+        self.assertEqual(mn.name(), "make")
+        self.assertEqual(mn.type(), "Make")
+        self.assertEqual(mn.rename("aaa"), "aaa")
+        self.assertEqual(mn.name(), "aaa")
