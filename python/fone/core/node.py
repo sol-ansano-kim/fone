@@ -4,9 +4,12 @@ from . import abst
 
 
 class FoneNode(abst._NodeBase):
-    def __init__(self, op):
+    def __init__(self, scene, op, name=None):
         super(FoneNode, self).__init__()
+        self.__scene = scene
         self.__impl = _node._FoneNodeImpl(op, self)
+        self.__name = None
+        self.rename(name or self.type())
 
     def __hash__(self):
         return self.__impl.__hash__()
@@ -19,6 +22,14 @@ class FoneNode(abst._NodeBase):
 
     def type(self):
         return self.__impl.type()
+
+    def name(self):
+        return self.__name
+
+    def rename(self, newName):
+        self.__name = self.__scene.getUniqueName(newName)
+
+        return self.__name
 
     def paramNames(self):
         return self.__impl.paramNames()

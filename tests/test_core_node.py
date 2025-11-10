@@ -148,10 +148,11 @@ class CoreNode(unittest.TestCase):
         cls.ParamTester = ParamTester
         cls.PlusOp = PlusOp
         cls.MakeNums = MakeNums
+        cls.scene = DummyScene()
 
     def test_params(self):
         ptop = self.ParamTester()
-        pt1 = self.node.FoneNode(ptop)
+        pt1 = self.node.FoneNode(self.scene, ptop)
         self.assertEqual(sorted(pt1.paramNames()), ["bool", "float", "int", "str"])
         bp = pt1.getParam("bool")
         self.assertEqual(bp.get(), pt1.getParamValue("bool"))
@@ -172,8 +173,8 @@ class CoreNode(unittest.TestCase):
         self.assertEqual(ip.get(), pt1.getParamValue("int"))
 
     def test_connection(self):
-        i0 = self.node.FoneNode(self.ZeroInputs())
-        i1 = self.node.FoneNode(self.OneInputs())
+        i0 = self.node.FoneNode(self.scene, self.ZeroInputs())
+        i1 = self.node.FoneNode(self.scene, self.OneInputs())
 
         self.assertTrue(i1.connect(i0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
@@ -204,16 +205,16 @@ class CoreNode(unittest.TestCase):
         with self.assertRaises(self.exceptions.FoneIndexError):
             self.assertTrue(i1.disconnect(1))
 
-        i2 = self.node.FoneNode(self.TwoInputs())
+        i2 = self.node.FoneNode(self.scene, self.TwoInputs())
         self.assertTrue(i1.connect(i0, 0))
         self.assertFalse(i1.connect(i2, 0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
         self.assertEqual(i1.inputs()[0], i0)
 
-        i01 = self.node.FoneNode(self.ZeroInputs())
-        i02 = self.node.FoneNode(self.ZeroInputs())
-        i1 = self.node.FoneNode(self.OneInputs())
-        i2 = self.node.FoneNode(self.TwoInputs())
+        i01 = self.node.FoneNode(self.scene, self.ZeroInputs())
+        i02 = self.node.FoneNode(self.scene, self.ZeroInputs())
+        i1 = self.node.FoneNode(self.scene, self.OneInputs())
+        i2 = self.node.FoneNode(self.scene, self.TwoInputs())
 
         self.assertTrue(i1.connect(i01, 0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
@@ -241,8 +242,8 @@ class CoreNode(unittest.TestCase):
     def test_operaion(self):
         op_plus = self.PlusOp()
         op_make = self.MakeNums()
-        node_plus = self.node.FoneNode(op_plus)
-        node_make = self.node.FoneNode(op_make)
+        node_plus = self.node.FoneNode(self.scene, op_plus)
+        node_make = self.node.FoneNode(self.scene, op_make)
         pck = node_make.operate(self.packet.FonePacketArray([]))
         self.assertIsNotNone(pck)
         self.assertEqual(len(pck.data()), 0)

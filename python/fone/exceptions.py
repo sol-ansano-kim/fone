@@ -5,7 +5,9 @@ class FoneInvalidArgumentError(Exception):
 
 class FoneNotImplementedError(Exception):
     def __init__(self, instance, name):
-        super(FoneNotImplementedError, self).__init__(f"'{instance.__class__.__name__}.{name}' is not implemented yet")
+        import inspect
+        cname = instance.__name__ if inspect.isclass(instance) else instance.__class__.__name__
+        super(FoneNotImplementedError, self).__init__(f"'{cname}.{name}' is not implemented yet")
 
 
 class FoneIndexError(Exception):
