@@ -1,12 +1,6 @@
-import os
-import re
-import inspect
-import importlib.util
 from . import abst
 from . import op
-
-
-RE_PY = re.compile(r"\.py$", re.IGNORECASE)
+from ..impl import _opManager
 
 
 class FoneOpManager(abst._OpManagerBase):
@@ -23,54 +17,16 @@ class FoneOpManager(abst._OpManagerBase):
         super(FoneOpManager, self).__init__()
 
     def __initialize(self):
-        self.__plugins = {}
-        self.reloadPlugins()
+        self.__impl = _opManager._FoneOpManagerImpl(op.FoneOp)
 
     def reloadPlugins(self):
-        for path in os.environ.get("FONE_PLUGIN_PATH", "").split(os.pathsep):
-            if not path:
-                continue
-
-            path = os.path.normpath(os.path.abspath(path))
-
-            if not os.path.isdir(path):
-                continue
-
-            for f in os.listdir(path):
-                fp = os.path.join(path, f)
-                fp = os.path.normpath(os.path.abspath(fp))
-                if not os.path.isfile(fp):
-                    continue
-
-                if not RE_PY.search(f):
-                    continue
-
-                mdl = None
-                try:
-                    spec = importlib.util.spec_from_file_location(f"_fone_plugin{os.path.splitext(f)[0]}", fp)
-                    mdl = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mdl)
-                except Exception as e:
-                    traceback.print_exc()
-                    print(f"WARNING : Failed to load the file {fp}")
-
-                if not mdl:
-                    continue
-
-                classes = inspect.getmembers(mdl, inspect.isclass)
-                classes = [x[1] for x in classes if issubclass(x[1], op.FoneOp) and x[1] != op.FoneOp]
-                for cls in classes:
-                    if cls.type() in self.__plugins:
-                        print(f"WARNING : {cls.type()} is registered already, ignore {fp}")
-                        continue
-
-                    self.__plugins[cls.type()] = cls()
+        self.__impl.reloadPlugins()
 
     def listOps(self):
-        return sorted(self.__plugins.keys())
+        return self.__impl.listOps()
 
     def getOp(self, opName):
-        return self.__plugins.get(opName)
+        return self.__impl.getOp(opName)
 
 
 manager = FoneOpManager()
