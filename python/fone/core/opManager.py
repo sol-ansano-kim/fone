@@ -2,13 +2,14 @@ import os
 import re
 import inspect
 import importlib.util
+from . import abst
 from . import op
 
 
 RE_PY = re.compile(r"\.py$", re.IGNORECASE)
 
 
-class FoneOpManager(object):
+class FoneOpManager(abst._OpManagerBase):
     __INSTANCE = None
 
     def __new__(self):

@@ -1,4 +1,6 @@
 from . import abst
+
+
 class FoneScene(abst._SceneBase):
     def __init__(self):
         super(FoneScene, self).__init__()

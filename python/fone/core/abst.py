@@ -107,6 +107,20 @@ class _OpBase(object):
         raise FoneNotImplementedError(self, "operate")
 
 
+class _OpManagerBase(object):
+    def __init__(self):
+        super(_OpManagerBase, self).__init__()
+
+    def reloadPlugins(self):
+        raise FoneNotImplementedError(self, "reloadPlugins")
+
+    def listOps(self):
+        raise FoneNotImplementedError(self, "listOps")
+
+    def getOp(self, opName):
+        raise FoneNotImplementedError(self, "getOp")
+
+
 class _PacketBase(object):
     def __init__(self):
         super(_PacketBase, self).__init__()
@@ -137,19 +151,19 @@ class _ParamBase(object):
         super(_ParamBase, self).__init__()
 
     def default(self):
-        raise FoneNotImplemetedError(self, "default")
+        raise FoneNotImplementedError(self, "default")
 
     def get(self):
-        raise FoneNotImplemetedError(self, "get")
+        raise FoneNotImplementedError(self, "get")
 
     def set(self, value):
-        raise FoneNotImplemetedError(self, "set")
+        raise FoneNotImplementedError(self, "set")
 
     def type(self):
-        raise FoneNotImplemetedError(self, "type")
+        raise FoneNotImplementedError(self, "type")
 
     def isValid(self, value):
-        raise FoneNotImplemetedError(self, "isValid")
+        raise FoneNotImplementedError(self, "isValid")
 
     def copy(self):
-        raise FoneNotImplemetedError(self, "copy")
+        raise FoneNotImplementedError(self, "copy")
