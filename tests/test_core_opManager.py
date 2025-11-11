@@ -35,6 +35,7 @@ class NodeManagerTest(unittest.TestCase):
 
     def test_load(self):
         man = self.opManager.FoneOpManager()
+        man.reloadPlugins()
         self.assertEqual(man.listOps(), ["MyOpA", "MyOpB"])
         op = man.getOp("MyOpA")
         self.assertIsNotNone(op)
