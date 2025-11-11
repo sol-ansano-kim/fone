@@ -64,7 +64,7 @@ class FoneOpManager(abst._OpManagerBase):
                         print(f"WARNING : {cls.type()} is registered already, ignore {fp}")
                         continue
 
-                    self.__plugins[cls.type()] = cls
+                    self.__plugins[cls.type()] = cls()
 
     def listOps(self):
         return sorted(self.__plugins.keys())
