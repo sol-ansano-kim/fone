@@ -8,9 +8,9 @@ RE_PY = re.compile(r"\.py$", re.IGNORECASE)
 
 
 class _FoneOpManagerImpl(object):
-    def __init__(self, opclass):
+    def __init__(self, opClass):
         super(_FoneOpManagerImpl, self).__init__()
-        self.__opclass = opclass
+        self.__opClass = opClass
         self.__plugins = {}
         self.reloadPlugins()
 
@@ -46,7 +46,7 @@ class _FoneOpManagerImpl(object):
                     continue
 
                 classes = inspect.getmembers(mdl, inspect.isclass)
-                classes = [x[1] for x in classes if issubclass(x[1], self.__opclass) and x[1] != self.__opclass]
+                classes = [x[1] for x in classes if issubclass(x[1], self.__opClass) and x[1] != self.__opClass]
                 for cls in classes:
                     if cls.type() in self.__plugins:
                         print(f"WARNING : {cls.type()} is registered already, ignore {fp}")
