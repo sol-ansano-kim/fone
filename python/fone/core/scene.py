@@ -1,48 +1,25 @@
 from . import abst
-from .node import FoneNode
-from .opManager import manager
+from . import node
+from . import opManager
+from ..impl import _scene
 
 
 class FoneScene(abst._SceneBase):
     def __init__(self):
         super(FoneScene, self).__init__()
-        self.__nodes = []
+        self.__impl = _scene._FoneSceneImpl(node.FoneNode, opManager.manager)
 
     def createNode(self, type, name=None):
-        op = manager.getOp(type)
-        if op is None:
-            return None
-
-        node = FoneNode(self, op, name=name)
-        self.__nodes[node.__hash__()] = node
-
-        return node
+        return self.__impl.createNode(type, name=name)
 
     def deleteNode(self, node):
-        if node.__hash__() not in self.__nodes:
-            return False
-
-        self.__nodes.pop(node.__hash__())
-
-        del node
+        return self.__impl.deleteNode(node)
 
     def nodes(self):
-        return [x for x in self.__nodes.values()]
+        return self.__impl.nodes()
 
     def getUniqueName(self, name):
-        index = 0
-
-        while (True):
-            nname = f"{name}{index}" if index > 0 else name
-
-            used = False
-            for n in self.__nodes.values():
-                if n.name() == nname:
-                    used = True
-                    break
-
-            if not used:
-                return nname
+        return self.__impl.getUniqueName()
 
     def read(self, filepath):
         pass
