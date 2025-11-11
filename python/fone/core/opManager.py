@@ -71,3 +71,6 @@ class FoneOpManager(abst._OpManagerBase):
 
     def getOp(self, opName):
         return self.__plugins.get(opName)
+
+
+manager = FoneOpManager()
