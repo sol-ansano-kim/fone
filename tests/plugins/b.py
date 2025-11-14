@@ -6,13 +6,13 @@ class MyOpB(op.FoneOp):
         super(MyOpB, self).__init__()
 
     def needs(self):
-        return 0
+        return 2
 
     def params(self):
         return {}
 
     def packetable(self):
-        return False
+        return True
 
 
 class MyOpC(object):

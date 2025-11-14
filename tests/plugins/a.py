@@ -12,4 +12,4 @@ class MyOpA(op.FoneOp):
         return {}
 
     def packetable(self):
-        return False
+        return True

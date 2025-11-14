@@ -15,13 +15,26 @@ class _FoneSceneImpl(object):
 
         return node
 
+    def __del_node(self, node):
+        node.disconnectAll()
+        for on in node.outputs():
+            indice = []
+            for i, io in enumerate(on.inputs()):
+                if io == node:
+                    indice.append(i)
+
+            for i in indice:
+                on.disconnect(i)
+
+        del node
+
     def deleteNode(self, node):
         if node.__hash__() not in self.__nodes:
             return False
 
         self.__nodes.pop(node.__hash__())
 
-        del node
+        self.__del_node(node)
 
         return True
 
