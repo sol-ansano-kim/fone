@@ -91,3 +91,12 @@ class SceneTest(unittest.TestCase):
         nodes.pop(1)
         self.assertEqual([x.name() for x in nodes], ["a", "a2"])
         self.assertEqual([x.name() for x in scn.nodes()], ["a", "a1", "a2"])
+
+    def test_clear(self):
+        scn = self.scene.FoneScene()
+        scn.createNode("MyOpA", name="a")
+        scn.createNode("MyOpA", name="a")
+        scn.createNode("MyOpB", name="a")
+        self.assertEqual([x.name() for x in scn.nodes()], ["a", "a1", "a2"])
+        self.assertTrue(scn.clear())
+        self.assertEqual([x.name() for x in scn.nodes()], [])

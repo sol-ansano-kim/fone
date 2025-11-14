@@ -52,4 +52,10 @@ class _FoneSceneImpl(object):
         pass
 
     def clear(self):
-        pass
+        keys = list(self.__nodes.keys())
+
+        for k in keys:
+            v = self.__nodes.pop(k)
+            del v
+
+        return True

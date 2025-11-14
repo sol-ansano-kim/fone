@@ -28,4 +28,4 @@ class FoneScene(abst._SceneBase):
         pass
 
     def clear(self):
-        pass
+        return self.__impl.clear()
