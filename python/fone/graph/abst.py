@@ -2,13 +2,13 @@ from ..exceptions import FoneNotImplementedError
 
 
 class _GraphNodeBase(object):
-    def __init__(self):
+    def __init__(self, node):
         super(_GraphNodeBase, self).__init__()
 
     def isDirty(self):
         raise FoneNotImplementedError(self, "isDirty")
 
-    def evaluate(self):
+    def evaluate(self, packetArray):
         raise FoneNotImplementedError(self, "evaluate")
 
     def packet(self):
