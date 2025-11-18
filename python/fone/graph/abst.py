@@ -5,6 +5,9 @@ class _GraphNodeBase(object):
     def __init__(self, node):
         super(_GraphNodeBase, self).__init__()
 
+    def node(self):
+        raise FoneNotImplementedError(self, "node")
+
     def isDirty(self):
         raise FoneNotImplementedError(self, "isDirty")
 
