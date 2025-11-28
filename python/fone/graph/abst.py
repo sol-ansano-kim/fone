@@ -22,7 +22,7 @@ class _GraphSceneBase(object):
     def __init__(self, scene):
         super(_GraphSceneBase, self).__init__()
 
-    def evaluate(self):
+    def evaluate(self, force=False):
         raise FoneNotImplementedError(self, "evaluate")
 
     def packet(self, node):

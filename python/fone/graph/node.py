@@ -23,10 +23,10 @@ class FoneGraphNode(abst._GraphNodeBase):
     def __inputs(self):
         inputs = []
         for inp in self.__node.inputs():
-            if inp is None:
-                inputs.append(inp)
-            else:
-                inputs.append(inp.__hash__())
+            if inp is not None:
+                inp = inp.__hash__()
+
+            inputs.append(inp)
 
         return inputs
 
