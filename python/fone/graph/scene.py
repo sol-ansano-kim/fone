@@ -36,14 +36,14 @@ class FoneGraphScene(abst._GraphSceneBase):
                 if cur not in cache:
                     eval_nodes.append(cur)
                     cache.add(cur)
-                    nexts.append([x for x in cur.inputs() if x is not None])
+                    nexts.extend([x for x in cur.inputs() if x is not None])
 
             currents = nexts
 
-        return [self.__graph_nodes[x.__hash__()] for x in reversed(nodes)]
+        return [self.__graph_nodes[x.__hash__()] for x in reversed(eval_nodes)]
 
     def evaluate(self, force=False):
-        schedule = self.__scratch_node()
+        schedule = self.__schedule()
 
     def packet(self, node):
         if node.__hash__() not in self.__graph_nodes:
