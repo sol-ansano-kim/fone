@@ -4,7 +4,7 @@ from ..core.packet import FonePacket
 
 class FoneGraphNode(abst._GraphNodeBase):
     def __init__(self, node):
-        super(FoneGraphNode, self).__init__()
+        super(FoneGraphNode, self).__init__(node)
         self.__node = node
         self.__latest_inputs = None
         self.__latest_params = None
@@ -37,7 +37,7 @@ class FoneGraphNode(abst._GraphNodeBase):
         if self.__latest_inputs != self.__inputs():
             return True
 
-        d = self.__params():
+        d = self.__params()
         if len(d) != len(self.__latest_params):
             return True
 
