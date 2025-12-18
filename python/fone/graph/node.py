@@ -48,10 +48,11 @@ class FoneGraphNode(abst._GraphNodeBase):
         return False
 
     def evaluate(self, packetArray):
-        self.__latest_inputs = self.__inputs()
-        self.__latest_params = self.__params()
+        if self.isDirty():
+            self.__latest_inputs = self.__inputs()
+            self.__latest_params = self.__params()
 
-        self.__packet = self.__node.operate(packetArray)
+            self.__packet = self.__node.operate(packetArray)
 
     def packet(self):
         return self.__packet
