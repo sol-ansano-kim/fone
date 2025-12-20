@@ -12,9 +12,12 @@ class SceneTest(unittest.TestCase):
         finally:
             import os
             from fone.core import scene
+            from fone.core import opManager
             cls.scene = scene
+            cls.opManager = opManager
             cls.orgEnv = os.environ.get("FONE_PLUGIN_PATH")
             os.environ["FONE_PLUGIN_PATH"] = os.path.join(__file__, "../plugins")
+            cls.opManager.FoneOpManager().reloadPlugins()
 
     @classmethod
     def tearDownClass(cls):
@@ -24,6 +27,8 @@ class SceneTest(unittest.TestCase):
             os.environ.pop("FONE_PLUGIN_PATH", None)
         else:
             os.environ["FONE_PLUGIN_PATH"] = cls.orgEnv
+
+        cls.opManager.FoneOpManager().reloadPlugins()
 
     def test_create(self):
         scn = self.scene.FoneScene()

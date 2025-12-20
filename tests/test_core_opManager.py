@@ -27,6 +27,8 @@ class NodeManagerTest(unittest.TestCase):
             cls.TestOpA = TestOpA
             cls.TestOpB = TestOpB
 
+            cls.opManager.FoneOpManager().reloadPlugins()
+
     @classmethod
     def tearDownClass(cls):
         import os
@@ -35,6 +37,8 @@ class NodeManagerTest(unittest.TestCase):
             os.environ.pop("FONE_PLUGIN_PATH", None)
         else:
             os.environ["FONE_PLUGIN_PATH"] = cls.orgEnv
+
+        cls.opManager.FoneOpManager().reloadPlugins()
 
     def test_singleton(self):
         a = self.opManager.FoneOpManager()

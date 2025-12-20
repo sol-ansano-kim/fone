@@ -16,6 +16,8 @@ class _FoneOpManagerImpl(object):
         self.reloadPlugins()
 
     def reloadPlugins(self):
+        self.__plugins = {}
+
         for path in os.environ.get("FONE_PLUGIN_PATH", "").split(os.pathsep):
             if not path:
                 continue
