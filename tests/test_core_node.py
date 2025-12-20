@@ -34,9 +34,6 @@ class CoreNode(unittest.TestCase):
             def __init__(self):
                 super(OneInputs, self).__init__()
 
-            def type(self):
-                return self.__class__.__name__
-
             def params(self):
                 return {}
 
@@ -49,9 +46,6 @@ class CoreNode(unittest.TestCase):
         class TwoInputs(op.FoneOp):
             def __init__(self):
                 super(TwoInputs, self).__init__()
-
-            def type(self):
-                return self.__class__.__name__
 
             def params(self):
                 return {}
@@ -66,9 +60,6 @@ class CoreNode(unittest.TestCase):
             def __init__(self):
                 super(ZeroInputs, self).__init__()
 
-            def type(self):
-                return self.__class__.__name__
-
             def params(self):
                 return {}
 
@@ -81,9 +72,6 @@ class CoreNode(unittest.TestCase):
         class ParamTester(op.FoneOp):
             def __init__(self):
                 super(ParamTester, self).__init__()
-
-            def type(self):
-                return self.__class__.__name__
 
             def params(self):
                 return {
@@ -103,9 +91,6 @@ class CoreNode(unittest.TestCase):
             def __init__(self):
                 super(PlusOp, self).__init__()
 
-            def type(self):
-                return "Plus"
-
             def params(self):
                 return {
                     "num": cls.param.FoneParamFloat()
@@ -123,9 +108,6 @@ class CoreNode(unittest.TestCase):
         class MakeNums(op.FoneOp):
             def __init__(self):
                 super(MakeNums, self).__init__()
-
-            def type(self):
-                return "Make"
 
             def params(self):
                 return {
@@ -277,9 +259,9 @@ class CoreNode(unittest.TestCase):
 
     def test_methods(self):
         mn = self.node.FoneNode(self.scene, self.MakeNums())
-        self.assertEqual(mn.name(), "Make")
+        self.assertEqual(mn.name(), "MakeNums")
         mn = self.node.FoneNode(self.scene, self.MakeNums(), name="make")
         self.assertEqual(mn.name(), "make")
-        self.assertEqual(mn.type(), "Make")
+        self.assertEqual(mn.type(), "MakeNums")
         self.assertEqual(mn.rename("aaa"), "aaa")
         self.assertEqual(mn.name(), "aaa")

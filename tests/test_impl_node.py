@@ -23,9 +23,6 @@ class ImplNode(unittest.TestCase):
             def __init__(self):
                 super(OneInputs, self).__init__()
 
-            def type(self):
-                return self.__class__.__name__
-
             def params(self):
                 return {}
 
@@ -38,9 +35,6 @@ class ImplNode(unittest.TestCase):
         class ZeroInputs(op.FoneOp):
             def __init__(self):
                 super(ZeroInputs, self).__init__()
-
-            def type(self):
-                return self.__class__.__name__
 
             def params(self):
                 return {}
@@ -55,9 +49,6 @@ class ImplNode(unittest.TestCase):
             def __init__(self):
                 super(TwoInputs, self).__init__()
 
-            def type(self):
-                return self.__class__.__name__
-
             def params(self):
                 return {}
 
@@ -71,9 +62,6 @@ class ImplNode(unittest.TestCase):
             def __init__(self):
                 super(TwoInputsPacketable, self).__init__()
 
-            def type(self):
-                return self.__class__.__name__
-
             def params(self):
                 return {}
 
@@ -86,9 +74,6 @@ class ImplNode(unittest.TestCase):
         class ParamTester(op.FoneOp):
             def __init__(self):
                 super(ParamTester, self).__init__()
-
-            def type(self):
-                return self.__class__.__name__
 
             def params(self):
                 return {

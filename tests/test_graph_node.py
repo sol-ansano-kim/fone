@@ -36,9 +36,6 @@ class GraphNode(unittest.TestCase):
             def __init__(self):
                 super(PlusOp, self).__init__()
 
-            def type(self):
-                return "Plus"
-
             def params(self):
                 return {
                     "num": cls.param.FoneParamFloat()
@@ -57,9 +54,6 @@ class GraphNode(unittest.TestCase):
         class MakeNums(op.FoneOp):
             def __init__(self):
                 super(MakeNums, self).__init__()
-
-            def type(self):
-                return "Make"
 
             def params(self):
                 return {
