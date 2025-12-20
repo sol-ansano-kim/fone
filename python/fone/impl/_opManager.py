@@ -47,16 +47,36 @@ class _FoneOpManagerImpl(object):
                     continue
 
                 classes = inspect.getmembers(mdl, inspect.isclass)
-                classes = [x[1] for x in classes if issubclass(x[1], self.__opClass) and x[1] != self.__opClass]
-                for cls in classes:
-                    if cls.type() in self.__plugins:
-                        print(f"WARNING : {cls.type()} is registered already, ignore {fp}")
-                        continue
-
-                    self.__plugins[cls.type()] = cls()
+                objs = [x[1]() for x in classes if issubclass(x[1], self.__opClass) and x[1] != self.__opClass]
+                for obj in objs:
+                    self.registerOp(obj)
 
     def listOps(self):
         return sorted(self.__plugins.keys())
 
     def getOp(self, opName):
         return self.__plugins.get(opName)
+
+    def registerOp(self, op):
+        if not isinstance(op, self.__opClass):
+            print(f"WARNING : {op} is not a {self.__opClass} object")
+            return False
+
+        if op.type() in self.__plugins:
+            print(f"WARNING : {op.type()} is registered already, ignored")
+            return False
+
+        self.__plugins[op.type()] = op
+
+        return True
+
+    def deregisterOp(self, op):
+        if op.type() not in self.__plugins:
+            return False
+
+        if op != self.__plugins[op.type()]:
+            return False
+
+        self.__plugins.pop(op.type())
+
+        return True

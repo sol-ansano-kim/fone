@@ -12,9 +12,20 @@ class NodeManagerTest(unittest.TestCase):
         finally:
             import os
             from fone.core import opManager
+            from fone.core import op
+            cls.op = op
             cls.opManager = opManager
             cls.orgEnv = os.environ.get("FONE_PLUGIN_PATH")
             os.environ["FONE_PLUGIN_PATH"] = os.path.join(__file__, "../plugins")
+
+            class TestOpA(op.FoneOp):
+                pass
+
+            class TestOpB(op.FoneOp):
+                pass
+
+            cls.TestOpA = TestOpA
+            cls.TestOpB = TestOpB
 
     @classmethod
     def tearDown(cls):
@@ -43,3 +54,30 @@ class NodeManagerTest(unittest.TestCase):
         self.assertIsNotNone(op)
         op = man.getOp("MyOpC")
         self.assertIsNone(op)
+
+    def test_reg_dereg(self):
+        man = self.opManager.FoneOpManager()
+        self.assertEqual(len(man.listOps()), 2)
+        opa = self.TestOpA()
+        opa1 = self.TestOpA()
+        opb = self.TestOpB()
+
+        self.assertTrue(man.registerOp(opa))
+        self.assertEqual(len(man.listOps()), 3)
+        self.assertEqual(man.getOp("TestOpA"), opa)
+        self.assertFalse(man.registerOp(opa))
+        self.assertEqual(len(man.listOps()), 3)
+        self.assertFalse(man.registerOp(opa1))
+        self.assertNotEqual(man.getOp("TestOpA"), opa1)
+        self.assertEqual(len(man.listOps()), 3)
+        self.assertTrue(man.registerOp(opb))
+        self.assertEqual(len(man.listOps()), 4)
+        self.assertEqual(man.getOp("TestOpB"), opb)
+        self.assertTrue(man.deregisterOp(opb))
+        self.assertEqual(len(man.listOps()), 3)
+        self.assertFalse(man.deregisterOp(opb))
+        self.assertEqual(len(man.listOps()), 3)
+        self.assertFalse(man.deregisterOp(opa1))
+        self.assertEqual(len(man.listOps()), 3)
+        self.assertTrue(man.deregisterOp(opa))
+        self.assertEqual(len(man.listOps()), 2)

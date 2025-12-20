@@ -28,5 +28,11 @@ class FoneOpManager(abst._OpManagerBase):
     def getOp(self, opName):
         return self.__impl.getOp(opName)
 
+    def registerOp(self, op):
+        return self.__impl.registerOp(op)
+
+    def deregisterOp(self, op):
+        return self.__impl.deregisterOp(op)
+
 
 manager = FoneOpManager()
