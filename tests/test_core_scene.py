@@ -3,7 +3,7 @@ import unittest
 
 class SceneTest(unittest.TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpClass(cls):
         try:
             from fone.core import scene
         except:
@@ -17,7 +17,7 @@ class SceneTest(unittest.TestCase):
             os.environ["FONE_PLUGIN_PATH"] = os.path.join(__file__, "../plugins")
 
     @classmethod
-    def tearDown(cls):
+    def tearDownClass(cls):
         import os
 
         if not cls.orgEnv:

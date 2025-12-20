@@ -3,7 +3,7 @@ import unittest
 
 class NodeManagerTest(unittest.TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpClass(cls):
         try:
             from fone.core import opManager
         except:
@@ -28,7 +28,7 @@ class NodeManagerTest(unittest.TestCase):
             cls.TestOpB = TestOpB
 
     @classmethod
-    def tearDown(cls):
+    def tearDownClass(cls):
         import os
 
         if not cls.orgEnv:

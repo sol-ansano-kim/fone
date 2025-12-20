@@ -3,7 +3,7 @@ import unittest
 
 class ImplNode(unittest.TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpClass(cls):
         try:
             from fone.core import packet
         except:
