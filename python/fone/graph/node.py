@@ -52,7 +52,9 @@ class FoneGraphNode(abst._GraphNodeBase):
             self.__latest_inputs = self.__inputs()
             self.__latest_params = self.__params()
 
-            self.__packet = self.__node.operate(packetArray)
+            p = self.__node.operate(packetArray)
+            if self.__node.packetable():
+                self.__packet = p
 
     def packet(self):
         return self.__packet
