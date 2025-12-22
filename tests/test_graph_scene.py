@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 
-class GraphNode(unittest.TestCase):
+class GraphScene(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         try:
@@ -24,30 +24,28 @@ class GraphNode(unittest.TestCase):
             cls.core_node = core_node
             cls.core_scene = core_scene
             cls.graph_node = graph_node
+            cls.graph_scene = graph_scene
             cls.exceptions = exceptions
             cls.param = param
             cls.packet = packet
             cls.opManager = opManager
-            opManager
 
             class PlusOp(op.FoneOp):
                 def __init__(self):
                     super(PlusOp, self).__init__()
 
                 def params(self):
-                    return {
-                        "num": cls.param.FoneParamFloat()
-                    }
+                    return {}
 
                 def needs(self):
-                    return 1
+                    return 2
 
                 def packetable(self):
                     return True
 
                 def operate(self, params, packetArray):
-                    GraphNode.count += 1
-                    return GraphNode.packet.FonePacket(data=packetArray.packet(0).data() + params.get("num"))
+                    GraphScene.count += 1
+                    return GraphScene.packet.FonePacket(data=packetArray.packet(0).data() + packetArray.packet(1).data())
 
             class MakeNums(op.FoneOp):
                 def __init__(self):
@@ -66,27 +64,68 @@ class GraphNode(unittest.TestCase):
                     return True
 
                 def operate(self, params, packetArray):
-                    GraphNode.count += 1
-                    return GraphNode.packet.FonePacket(data=np.array([params.get("num")] * params.get("count")))
+                    GraphScene.count += 1
+                    return GraphScene.packet.FonePacket(data=np.array([params.get("num")] * params.get("count")))
+
+            class Output(op.FoneOp):
+                def __init__(self):
+                    super(Output, self).__init__()
+
+                def needs(self):
+                    return 1
+
+                def packetable(self):
+                    return False
+
+                def params(self):
+                    return {}
+
+                def operate(self, params, packetArray):
+                    GraphScene.count += 1
+                    pass
 
             cls.PlusOp = PlusOp()
             cls.MakeNums = MakeNums()
-            cls.scene = core_scene.FoneScene()
+            cls.Output = Output()
             cls.count = 0
 
             opManager.FoneOpManager().registerOp(cls.PlusOp)
             opManager.FoneOpManager().registerOp(cls.MakeNums)
+            opManager.FoneOpManager().registerOp(cls.Output)
 
     @classmethod
     def tearDownClass(cls):
         cls.opManager.FoneOpManager().deregisterOp(cls.PlusOp)
         cls.opManager.FoneOpManager().deregisterOp(cls.MakeNums)
+        cls.opManager.FoneOpManager().deregisterOp(cls.Output)
 
     def test_creation(self):
-        self.assertEqual(len(self.opManager.FoneOpManager().listOps()), 2)
+        self.assertEqual(len(self.opManager.FoneOpManager().listOps()), 3)
         self.assertIsNotNone(self.opManager.FoneOpManager().getOp("PlusOp"))
         self.assertIsNotNone(self.opManager.FoneOpManager().getOp("MakeNums"))
+        self.assertIsNotNone(self.opManager.FoneOpManager().getOp("Output"))
 
         scn = self.core_scene.FoneScene()
-        self.assertIsNotNone(scn.createNode("PlusOp"))
-        self.assertIsNotNone(scn.createNode("MakeNums"))
+        p1 = scn.createNode("PlusOp")
+        m1 = scn.createNode("MakeNums")
+        m2 = scn.createNode("MakeNums")
+        op = scn.createNode("Output")
+        self.assertIsNotNone(p1)
+        self.assertIsNotNone(m1)
+        self.assertIsNotNone(m2)
+        self.assertIsNotNone(op)
+
+        self.assertEqual(GraphScene.count, 0)
+        self.assertEqual(len(scn.nodes()), 4)
+        m1.setParamValue("num", 1.0)
+        m1.setParamValue("count", 1)
+        m2.setParamValue("num", 2.0)
+        m2.setParamValue("count", 1)
+
+        p1.connect(m1, 0)
+        p1.connect(m2, 1)
+        op.connect(p1, 0)
+
+        graph_scene = self.graph_scene.FoneGraphScene(scn)
+        self.assertIsNotNone(graph_scene)
+        graph_scene.packet(p1)

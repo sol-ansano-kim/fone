@@ -4,19 +4,19 @@ from . import node
 
 class FoneGraphScene(abst._GraphSceneBase):
     def __init__(self, scene):
-        super(FoneGraphScene, self).__init__()
+        super(FoneGraphScene, self).__init__(scene)
         self.__scene = scene
         self.__graph_nodes = {}
 
     def __scratch_node(self):
         new_nodes = {}
 
-        for node in self.__scene.nodes():
-            n = new_nodes.get(node.__hash__(), None)
+        for sn in self.__scene.nodes():
+            n = new_nodes.get(sn.__hash__(), None)
             if n is None:
-                n = node.FoneGraphNode(node)
+                n = node.FoneGraphNode(sn)
 
-            new_nodes[node.__hash__()] = n
+            new_nodes[sn.__hash__()] = n
 
         self.__graph_nodes = new_nodes
 
@@ -42,8 +42,18 @@ class FoneGraphScene(abst._GraphSceneBase):
 
         return [self.__graph_nodes[x.__hash__()] for x in reversed(eval_nodes)]
 
-    def evaluate(self, force=False):
-        schedule = self.__schedule()
+    def __evaluate(self, force=False):
+        waiting = self.__schedule()
+
+        latest_count = None
+
+        while (waiting):
+            pending = []
+            count = len(waiting)
+            for _ in range(count):
+                n = waiting.pop(0)
+
+
 
     def packet(self, node):
         if node.__hash__() not in self.__graph_nodes:
@@ -53,6 +63,6 @@ class FoneGraphScene(abst._GraphSceneBase):
         if gn is None:
             return None
 
-        self.evaluate(force=False)
+        self.__evaluate(force=False)
 
         return gn.packet()
