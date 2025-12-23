@@ -10,11 +10,11 @@ class FoneGraphScene(abst._GraphSceneBase):
         self.__scene = scene
         self.__graph_nodes = {}
 
-    def __scratch_node(self):
+    def __track_nodes(self):
         new_nodes = {}
 
         for sn in self.__scene.nodes():
-            n = new_nodes.get(sn.__hash__(), None)
+            n = self.__graph_nodes.get(sn.__hash__(), None)
             if n is None:
                 n = node.FoneGraphNode(sn)
 
@@ -22,15 +22,27 @@ class FoneGraphScene(abst._GraphSceneBase):
 
         self.__graph_nodes = new_nodes
 
-    def __schedule(self):
+    def __input_hashes(self, node):
+        hashes = set()
+
+        currents = [node]
+        while (currents):
+            nexts = []
+
+            for cur in currents:
+                if cur.__hash__() not in hashes:
+                    hashes.add(cur.__hash__())
+                    nexts.extend([x for x in cur.inputs() if x is not None])
+
+            currents = nexts
+
+        return hashes
+
+    def __input_network(self, nodes):
         cache = set()
-
-        currents = []
-        for node in self.__scene.nodes():
-            if not node.packetable():
-                currents.append(node)
-
         eval_nodes = []
+
+        currents = nodes[:]
         while (currents):
             nexts = []
 
@@ -44,8 +56,18 @@ class FoneGraphScene(abst._GraphSceneBase):
 
         return [self.__graph_nodes[x.__hash__()] for x in reversed(eval_nodes)]
 
-    def __evaluate(self, force=False):
-        waiting = self.__schedule()
+    def __evaluate(self, nodes, force=False):
+        self.__track_nodes()
+
+        waiting = self.__input_network(nodes)
+        dirty_hashes = set([x.node().__hash__() for x in waiting if x.isDirty()])
+        evaled = set()
+
+        def _isDirty(n):
+            if n.__hash__() in evaled:
+                return False
+
+            return len(self.__input_hashes(n).intersection(dirty_hashes)) > 0
 
         latest_count = None
         while (waiting):
@@ -58,13 +80,16 @@ class FoneGraphScene(abst._GraphSceneBase):
             for _ in range(latest_count):
                 gn = waiting.pop(0)
 
-                if not gn.isDirty():
+                if gn.node().__hash__() in evaled:
+                    continue
+
+                if not force and not _isDirty(gn.node()):
                     continue
 
                 ready = True
                 packets = []
                 for inn in gn.node().inputs():
-                    if inn is not None and self.__graph_nodes[inn.__hash__()].isDirty():
+                    if inn is not None and _isDirty(inn):
                         ready = False
                         break
 
@@ -77,18 +102,19 @@ class FoneGraphScene(abst._GraphSceneBase):
                     pending.append(gn)
                     continue
 
-                gn.evaluate(packet.FonePacketArray(packets))
+                gn.evaluate(packet.FonePacketArray(packets), force=True)
+                evaled.add(gn.node().__hash__())
 
             waiting = pending + waiting
 
     def packet(self, node):
         if node.__hash__() not in self.__graph_nodes:
-            self.__scratch_node()
+            self.__track_nodes()
 
         gn = self.__graph_nodes.get(node.__hash__())
         if gn is None:
             return None
 
-        self.__evaluate(force=False)
+        self.__evaluate([node])
 
         return gn.packet()
