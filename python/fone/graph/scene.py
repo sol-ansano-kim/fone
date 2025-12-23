@@ -1,5 +1,7 @@
 from . import abst
 from . import node
+from ..core import packet
+from .. import exceptions
 
 
 class FoneGraphScene(abst._GraphSceneBase):
@@ -46,14 +48,38 @@ class FoneGraphScene(abst._GraphSceneBase):
         waiting = self.__schedule()
 
         latest_count = None
-
         while (waiting):
+            if len(waiting) == latest_count:
+                raise exceptions.FoneGraphEvaluationError("Failed to evaludate the scene graph")
+
+            latest_count = len(waiting)
+
             pending = []
-            count = len(waiting)
-            for _ in range(count):
-                n = waiting.pop(0)
+            for _ in range(latest_count):
+                gn = waiting.pop(0)
 
+                if not gn.isDirty():
+                    continue
 
+                ready = True
+                packets = []
+                for inn in gn.node().inputs():
+                    if inn is not None and self.__graph_nodes[inn.__hash__()].isDirty():
+                        ready = False
+                        break
+
+                    if inn is None:
+                        packets.append(packet.FonePacket())
+                    else:
+                        packets.append(self.__graph_nodes[inn.__hash__()].packet())
+
+                if not ready:
+                    pending.append(gn)
+                    continue
+
+                gn.evaluate(packet.FonePacketArray(packets))
+
+            waiting = pending + waiting
 
     def packet(self, node):
         if node.__hash__() not in self.__graph_nodes:

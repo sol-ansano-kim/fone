@@ -18,3 +18,7 @@ class FoneIndexError(Exception):
 class FoneInvalidParamValueError(Exception):
     def __init__(self, instance, value):
         super(FoneInvalidParamValueError, self).__init__(f"Invalid value '{value}' given for '{instance.__class__.__name__}'")
+
+
+class FoneGraphEvaluationError(Exception):
+    pass
