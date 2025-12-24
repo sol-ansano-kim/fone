@@ -22,22 +22,6 @@ class FnGraphGraphScene(abst._GraphSceneBase):
 
         self.__graph_nodes = new_nodes
 
-    def __input_hashes(self, node):
-        hashes = set()
-
-        currents = [node]
-        while (currents):
-            nexts = []
-
-            for cur in currents:
-                if cur.__hash__() not in hashes:
-                    hashes.add(cur.__hash__())
-                    nexts.extend([x for x in cur.inputs() if x is not None])
-
-            currents = nexts
-
-        return hashes
-
     def __input_network(self, nodes):
         cache = set()
         eval_nodes = []
