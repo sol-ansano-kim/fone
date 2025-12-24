@@ -120,6 +120,12 @@ class _OpManagerBase(object):
     def getOp(self, opName):
         raise FoneNotImplementedError(self, "getOp")
 
+    def registerOp(self, op):
+        raise FoneNotImplementedError(self, "registerOp")
+
+    def deregisterOp(self, op):
+        raise FoneNotImplementedError(self, "deregisterOp")
+
 
 class _PacketBase(object):
     def __init__(self):
