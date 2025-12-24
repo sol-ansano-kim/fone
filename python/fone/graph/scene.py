@@ -56,18 +56,26 @@ class FoneGraphScene(abst._GraphSceneBase):
 
         return [self.__graph_nodes[x.__hash__()] for x in reversed(eval_nodes)]
 
-    def __evaluate(self, nodes, force=False):
+    def evaluate(self, nodes, force=False):
         self.__track_nodes()
 
         waiting = self.__input_network(nodes)
-        dirty_hashes = set([x.node().__hash__() for x in waiting if x.isDirty()])
+        dirty_set = set()
+
+        curs = [x for x in waiting if x.isDirty()]
+        while (curs):
+            nexts = []
+            for cur in curs:
+                if cur.node().__hash__() in dirty_set:
+                    continue
+
+                cur.dirty()
+                dirty_set.add(cur.node().__hash__())
+                nexts.extend([self.__graph_nodes[x.__hash__()] for x in cur.node().outputs()])
+
+            curs = nexts
+
         evaled = set()
-
-        def _isDirty(n):
-            if n.__hash__() in evaled:
-                return False
-
-            return len(self.__input_hashes(n).intersection(dirty_hashes)) > 0
 
         latest_count = None
         while (waiting):
@@ -83,13 +91,13 @@ class FoneGraphScene(abst._GraphSceneBase):
                 if gn.node().__hash__() in evaled:
                     continue
 
-                if not force and not _isDirty(gn.node()):
+                if not force and not gn.isDirty():
                     continue
 
                 ready = True
                 packets = []
                 for inn in gn.node().inputs():
-                    if inn is not None and _isDirty(inn):
+                    if inn is not None and self.__graph_nodes[inn.__hash__()].isDirty():
                         ready = False
                         break
 
@@ -102,7 +110,7 @@ class FoneGraphScene(abst._GraphSceneBase):
                     pending.append(gn)
                     continue
 
-                gn.evaluate(packet.FonePacketArray(packets), force=True)
+                gn.evaluate(packet.FonePacketArray(packets))
                 evaled.add(gn.node().__hash__())
 
             waiting = pending + waiting
@@ -115,6 +123,6 @@ class FoneGraphScene(abst._GraphSceneBase):
         if gn is None:
             return None
 
-        self.__evaluate([node])
+        self.evaluate([node])
 
         return gn.packet()

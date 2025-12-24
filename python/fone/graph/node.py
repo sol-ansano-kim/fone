@@ -30,6 +30,10 @@ class FoneGraphNode(abst._GraphNodeBase):
 
         return inputs
 
+    def dirty(self):
+        self.__latest_inputs = None
+        self.__latest_params = None
+
     def isDirty(self):
         if self.__latest_inputs is None or self.__latest_params is None:
             return True
@@ -47,8 +51,8 @@ class FoneGraphNode(abst._GraphNodeBase):
 
         return False
 
-    def evaluate(self, packetArray, force=False):
-        if force or self.isDirty():
+    def evaluate(self, packetArray):
+        if self.isDirty():
             self.__latest_inputs = self.__inputs()
             self.__latest_params = self.__params()
 

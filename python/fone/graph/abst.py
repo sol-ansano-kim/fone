@@ -8,6 +8,9 @@ class _GraphNodeBase(object):
     def node(self):
         raise FoneNotImplementedError(self, "node")
 
+    def dirty(self):
+        raise FoneNotImplementedError(self, "dirty")
+
     def isDirty(self):
         raise FoneNotImplementedError(self, "isDirty")
 
@@ -22,8 +25,8 @@ class _GraphSceneBase(object):
     def __init__(self, scene):
         super(_GraphSceneBase, self).__init__()
 
-    def evaluate(self, force=False):
+    def evaluate(self, nodes, force=False):
         raise FoneNotImplementedError(self, "evaluate")
 
-    def packet(self, node):
+    def packet(self, nodes):
         raise FoneNotImplementedError(self, "packet")
