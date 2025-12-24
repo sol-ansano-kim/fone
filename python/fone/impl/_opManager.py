@@ -8,9 +8,9 @@ import importlib.util
 RE_PY = re.compile(r"\.py$", re.IGNORECASE)
 
 
-class _FoneOpManagerImpl(object):
+class _FnCoreOpManagerImpl(object):
     def __init__(self, opClass):
-        super(_FoneOpManagerImpl, self).__init__()
+        super(_FnCoreOpManagerImpl, self).__init__()
         self.__opClass = opClass
         self.__plugins = {}
         self.reloadPlugins()

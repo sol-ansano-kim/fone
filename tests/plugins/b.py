@@ -1,7 +1,7 @@
 from fone.core import op
 
 
-class MyOpB(op.FoneOp):
+class MyOpB(op.FnCoreOp):
     def __init__(self):
         super(MyOpB, self).__init__()
 

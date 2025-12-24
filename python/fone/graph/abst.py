@@ -1,4 +1,4 @@
-from ..exceptions import FoneNotImplementedError
+from ..exceptions import FnErrNotImplementedError
 
 
 class _GraphNodeBase(object):
@@ -6,19 +6,19 @@ class _GraphNodeBase(object):
         super(_GraphNodeBase, self).__init__()
 
     def node(self):
-        raise FoneNotImplementedError(self, "node")
+        raise FnErrNotImplementedError(self, "node")
 
     def dirty(self):
-        raise FoneNotImplementedError(self, "dirty")
+        raise FnErrNotImplementedError(self, "dirty")
 
     def isDirty(self):
-        raise FoneNotImplementedError(self, "isDirty")
+        raise FnErrNotImplementedError(self, "isDirty")
 
     def evaluate(self, packetArray):
-        raise FoneNotImplementedError(self, "evaluate")
+        raise FnErrNotImplementedError(self, "evaluate")
 
     def packet(self):
-        raise FoneNotImplementedError(self, "packet")
+        raise FnErrNotImplementedError(self, "packet")
 
 
 class _GraphSceneBase(object):
@@ -26,7 +26,7 @@ class _GraphSceneBase(object):
         super(_GraphSceneBase, self).__init__()
 
     def evaluate(self, nodes, force=False):
-        raise FoneNotImplementedError(self, "evaluate")
+        raise FnErrNotImplementedError(self, "evaluate")
 
     def packet(self, nodes):
-        raise FoneNotImplementedError(self, "packet")
+        raise FnErrNotImplementedError(self, "packet")

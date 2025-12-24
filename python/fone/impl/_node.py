@@ -3,14 +3,14 @@ from ..core import param
 from .. import exceptions
 
 
-class _FoneNodeImpl(object):
+class _FnCoreNodeImpl(object):
     def __init__(self, op, node):
-        super(_FoneNodeImpl, self).__init__()
+        super(_FnCoreNodeImpl, self).__init__()
         self.__id = uuid.uuid4()
         self.__op = op
         self.__node = node
         self.__inputs = [None] * self.__op.needs()
-        self.__params = param.FoneParams(self.__op.params())
+        self.__params = param.FnCoreParams(self.__op.params())
         self.__outputs = set()
 
     def __hash__(self):
@@ -20,7 +20,7 @@ class _FoneNodeImpl(object):
         return self.__id
 
     def __eq__(self, other):
-        return isinstance(other, _FoneNodeImpl) and other.id() == self.__id
+        return isinstance(other, _FnCoreNodeImpl) and other.id() == self.__id
 
     def __neq__(self, other):
         return not self.__eq__(other)
@@ -92,7 +92,7 @@ class _FoneNodeImpl(object):
 
     def connectInput(self, index, nodeImpl):
         if index >= self.__op.needs():
-            raise exceptions.FoneIndexError(index, self.__op.needs())
+            raise exceptions.FnErrIndexError(index, self.__op.needs())
 
         if not nodeImpl.packetable():
             return False
@@ -114,7 +114,7 @@ class _FoneNodeImpl(object):
 
     def disconnectInput(self, index):
         if index >= self.__op.needs():
-            raise exceptions.FoneIndexError(index, self.__op.needs())
+            raise exceptions.FnErrIndexError(index, self.__op.needs())
 
         if self.__inputs[index] is None:
             return False

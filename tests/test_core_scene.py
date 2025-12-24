@@ -17,7 +17,7 @@ class SceneTest(unittest.TestCase):
             cls.opManager = opManager
             cls.orgEnv = os.environ.get("FONE_PLUGIN_PATH")
             os.environ["FONE_PLUGIN_PATH"] = os.path.join(__file__, "../plugins")
-            cls.opManager.FoneOpManager().reloadPlugins()
+            cls.opManager.FnCoreOpManager().reloadPlugins()
 
     @classmethod
     def tearDownClass(cls):
@@ -28,10 +28,10 @@ class SceneTest(unittest.TestCase):
         else:
             os.environ["FONE_PLUGIN_PATH"] = cls.orgEnv
 
-        cls.opManager.FoneOpManager().reloadPlugins()
+        cls.opManager.FnCoreOpManager().reloadPlugins()
 
     def test_create(self):
-        scn = self.scene.FoneScene()
+        scn = self.scene.FnCoreScene()
         self.assertIsNotNone(scn)
         self.assertEqual(scn.nodes(), [])
         nodea = scn.createNode("MyOpA")
@@ -54,7 +54,7 @@ class SceneTest(unittest.TestCase):
         self.assertEqual(len(scn.nodes()), 4)
         self.assertEqual(nodea3.name(), "MyOpA2")
 
-        scn = self.scene.FoneScene()
+        scn = self.scene.FnCoreScene()
         n = scn.createNode("MyOpB", name="aaa")
         self.assertEqual(len(scn.nodes()), 1)
         self.assertEqual(n.name(), "aaa")
@@ -63,7 +63,7 @@ class SceneTest(unittest.TestCase):
         self.assertEqual(n.name(), "aaa1")
 
     def test_delete(self):
-        scn = self.scene.FoneScene()
+        scn = self.scene.FnCoreScene()
         a = scn.createNode("MyOpB", name="a")
         b = scn.createNode("MyOpB", name="b")
         c = scn.createNode("MyOpB", name="c")
@@ -71,7 +71,7 @@ class SceneTest(unittest.TestCase):
         self.assertTrue(scn.deleteNode(b))
         self.assertEqual(len(scn.nodes()), 2)
 
-        scn2 = self.scene.FoneScene()
+        scn2 = self.scene.FnCoreScene()
         a = scn2.createNode("MyOpB", name="a")
         self.assertEqual(len(scn.nodes()), 2)
         self.assertEqual(len(scn2.nodes()), 1)
@@ -87,7 +87,7 @@ class SceneTest(unittest.TestCase):
         self.assertEqual(len(scn2.nodes()), 0)
 
     def test_node(self):
-        scn = self.scene.FoneScene()
+        scn = self.scene.FnCoreScene()
         scn.createNode("MyOpA", name="a")
         scn.createNode("MyOpA", name="a")
         scn.createNode("MyOpB", name="a")
@@ -98,7 +98,7 @@ class SceneTest(unittest.TestCase):
         self.assertEqual([x.name() for x in scn.nodes()], ["a", "a1", "a2"])
 
     def test_clear(self):
-        scn = self.scene.FoneScene()
+        scn = self.scene.FnCoreScene()
         scn.createNode("MyOpA", name="a")
         scn.createNode("MyOpA", name="a")
         scn.createNode("MyOpB", name="a")
@@ -107,7 +107,7 @@ class SceneTest(unittest.TestCase):
         self.assertEqual([x.name() for x in scn.nodes()], [])
 
     def test_disconnect_deleted_nodes(self):
-        scn = self.scene.FoneScene()
+        scn = self.scene.FnCoreScene()
         a1 = scn.createNode("MyOpA")
         a2 = scn.createNode("MyOpA")
         b1 = scn.createNode("MyOpB")

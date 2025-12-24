@@ -4,9 +4,9 @@ from ..core import packet
 from .. import exceptions
 
 
-class FoneGraphScene(abst._GraphSceneBase):
+class FnGraphGraphScene(abst._GraphSceneBase):
     def __init__(self, scene):
-        super(FoneGraphScene, self).__init__(scene)
+        super(FnGraphGraphScene, self).__init__(scene)
         self.__scene = scene
         self.__graph_nodes = {}
 
@@ -16,7 +16,7 @@ class FoneGraphScene(abst._GraphSceneBase):
         for sn in self.__scene.nodes():
             n = self.__graph_nodes.get(sn.__hash__(), None)
             if n is None:
-                n = node.FoneGraphNode(sn)
+                n = node.FnGraphNode(sn)
 
             new_nodes[sn.__hash__()] = n
 
@@ -80,7 +80,7 @@ class FoneGraphScene(abst._GraphSceneBase):
         latest_count = None
         while (waiting):
             if len(waiting) == latest_count:
-                raise exceptions.FoneGraphEvaluationError("Failed to evaludate the scene graph")
+                raise exceptions.FnErrGraphEvaluationError("Failed to evaludate the scene graph")
 
             latest_count = len(waiting)
 
@@ -102,7 +102,7 @@ class FoneGraphScene(abst._GraphSceneBase):
                         break
 
                     if inn is None:
-                        packets.append(packet.FonePacket())
+                        packets.append(packet.FnCorePacket())
                     else:
                         packets.append(self.__graph_nodes[inn.__hash__()].packet())
 
@@ -110,7 +110,7 @@ class FoneGraphScene(abst._GraphSceneBase):
                     pending.append(gn)
                     continue
 
-                gn.evaluate(packet.FonePacketArray(packets))
+                gn.evaluate(packet.FnCorePacketArray(packets))
                 evaled.add(gn.node().__hash__())
 
             waiting = pending + waiting

@@ -1,6 +1,6 @@
-class _FoneSceneImpl(object):
+class _FnCoreSceneImpl(object):
     def __init__(self, nodeClass, opManager):
-        super(_FoneSceneImpl, self).__init__()
+        super(_FnCoreSceneImpl, self).__init__()
         self.__node_class = nodeClass
         self.__op_manager = opManager
         self.__nodes = {}

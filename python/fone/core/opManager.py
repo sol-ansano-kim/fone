@@ -3,21 +3,21 @@ from . import op
 from ..impl import _opManager
 
 
-class FoneOpManager(abst._OpManagerBase):
+class FnCoreOpManager(abst._OpManagerBase):
     __INSTANCE = None
 
     def __new__(self):
-        if FoneOpManager.__INSTANCE is None:
-            FoneOpManager.__INSTANCE = super(FoneOpManager, self).__new__(self)
-            FoneOpManager.__INSTANCE.__initialize()
+        if FnCoreOpManager.__INSTANCE is None:
+            FnCoreOpManager.__INSTANCE = super(FnCoreOpManager, self).__new__(self)
+            FnCoreOpManager.__INSTANCE.__initialize()
 
-        return FoneOpManager.__INSTANCE
+        return FnCoreOpManager.__INSTANCE
 
     def __init__(self):
-        super(FoneOpManager, self).__init__()
+        super(FnCoreOpManager, self).__init__()
 
     def __initialize(self):
-        self.__impl = _opManager._FoneOpManagerImpl(op.FoneOp)
+        self.__impl = _opManager._FnCoreOpManagerImpl(op.FnCoreOp)
 
     def reloadPlugins(self):
         self.__impl.reloadPlugins()
@@ -35,4 +35,4 @@ class FoneOpManager(abst._OpManagerBase):
         return self.__impl.deregisterOp(op)
 
 
-manager = FoneOpManager()
+manager = FnCoreOpManager()

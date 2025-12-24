@@ -3,11 +3,11 @@ from ..impl import _node
 from . import abst
 
 
-class FoneNode(abst._NodeBase):
+class FnCoreNode(abst._NodeBase):
     def __init__(self, scene, op, name=None):
-        super(FoneNode, self).__init__()
+        super(FnCoreNode, self).__init__()
         self.__scene = scene
-        self.__impl = _node._FoneNodeImpl(op, self)
+        self.__impl = _node._FnCoreNodeImpl(op, self)
         self.__name = None
         self.rename(name or self.type())
 
@@ -15,7 +15,7 @@ class FoneNode(abst._NodeBase):
         return self.__impl.__hash__()
 
     def __eq__(self, other):
-        return isinstance(other, FoneNode) and other.__impl == self.__impl
+        return isinstance(other, FnCoreNode) and other.__impl == self.__impl
 
     def __neq__(self, other):
         return not self.__eq__(other)

@@ -19,7 +19,7 @@ class ImplNode(unittest.TestCase):
             cls.exceptions = exceptions
             cls.param = param
 
-        class OneInputs(op.FoneOp):
+        class OneInputs(op.FnCoreOp):
             def __init__(self):
                 super(OneInputs, self).__init__()
 
@@ -32,7 +32,7 @@ class ImplNode(unittest.TestCase):
             def packetable(self):
                 return True
 
-        class ZeroInputs(op.FoneOp):
+        class ZeroInputs(op.FnCoreOp):
             def __init__(self):
                 super(ZeroInputs, self).__init__()
 
@@ -45,7 +45,7 @@ class ImplNode(unittest.TestCase):
             def packetable(self):
                 return True
 
-        class TwoInputs(op.FoneOp):
+        class TwoInputs(op.FnCoreOp):
             def __init__(self):
                 super(TwoInputs, self).__init__()
 
@@ -58,7 +58,7 @@ class ImplNode(unittest.TestCase):
             def packetable(self):
                 return False
 
-        class TwoInputsPacketable(op.FoneOp):
+        class TwoInputsPacketable(op.FnCoreOp):
             def __init__(self):
                 super(TwoInputsPacketable, self).__init__()
 
@@ -71,16 +71,16 @@ class ImplNode(unittest.TestCase):
             def packetable(self):
                 return True
 
-        class ParamTester(op.FoneOp):
+        class ParamTester(op.FnCoreOp):
             def __init__(self):
                 super(ParamTester, self).__init__()
 
             def params(self):
                 return {
-                    "int": cls.param.FoneParamInt(),
-                    "bool": cls.param.FoneParamBool(),
-                    "float": cls.param.FoneParamFloat(),
-                    "str": cls.param.FoneParamStr(),
+                    "int": cls.param.FnCoreParamInt(),
+                    "bool": cls.param.FnCoreParamBool(),
+                    "float": cls.param.FnCoreParamFloat(),
+                    "str": cls.param.FnCoreParamStr(),
                 }
 
             def needs(self):
@@ -117,8 +117,8 @@ class ImplNode(unittest.TestCase):
         self.assertFalse(i2.packetable())
 
     def test_connect(self):
-        i0 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
-        i1 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        i0 = self._node._FnCoreNodeImpl(self.ZeroInputs(), None)
+        i1 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
 
         self.assertTrue(i1.connectInput(0, i0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
@@ -144,22 +144,22 @@ class ImplNode(unittest.TestCase):
         self.assertEqual(len(i0.outputs()), 0)
         self.assertFalse(i1.disconnectInput(0))
 
-        with self.assertRaises(self.exceptions.FoneIndexError):
+        with self.assertRaises(self.exceptions.FnErrIndexError):
             self.assertTrue(i1.connectInput(1, i0))
-        with self.assertRaises(self.exceptions.FoneIndexError):
+        with self.assertRaises(self.exceptions.FnErrIndexError):
             self.assertTrue(i1.disconnectInput(1))
 
-        i2 = self._node._FoneNodeImpl(self.TwoInputs(), None)
+        i2 = self._node._FnCoreNodeImpl(self.TwoInputs(), None)
         self.assertTrue(i1.connectInput(0, i0))
         self.assertFalse(i1.connectInput(0, i2))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
         self.assertEqual(i1.inputs()[0], i0)
 
-        i01 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
-        i02 = self._node._FoneNodeImpl(self.ZeroInputs(), None)
-        i1 = self._node._FoneNodeImpl(self.OneInputs(), None)
-        i11 = self._node._FoneNodeImpl(self.OneInputs(), None)
-        i2 = self._node._FoneNodeImpl(self.TwoInputs(), None)
+        i01 = self._node._FnCoreNodeImpl(self.ZeroInputs(), None)
+        i02 = self._node._FnCoreNodeImpl(self.ZeroInputs(), None)
+        i1 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
+        i11 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
+        i2 = self._node._FnCoreNodeImpl(self.TwoInputs(), None)
 
         self.assertTrue(i1.connectInput(0, i01))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
@@ -187,7 +187,7 @@ class ImplNode(unittest.TestCase):
 
     def test_params(self):
         pt = self.ParamTester()
-        pt1 = self._node._FoneNodeImpl(pt, None)
+        pt1 = self._node._FnCoreNodeImpl(pt, None)
         self.assertEqual(sorted(pt1.paramNames()), ["bool", "float", "int", "str"])
         bp = pt1.getParam("bool")
         self.assertEqual(bp.get(), pt1.getParamValue("bool"))
@@ -208,19 +208,19 @@ class ImplNode(unittest.TestCase):
         self.assertEqual(ip.get(), pt1.getParamValue("int"))
 
     def test_cycle(self):
-        one1 = self._node._FoneNodeImpl(self.OneInputs(), None)
-        one2 = self._node._FoneNodeImpl(self.OneInputs(), None)
-        one3 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        one1 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
+        one2 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
+        one3 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
         self.assertTrue(one1.connectInput(0, one2))
         self.assertFalse(one2.connectInput(0, one1))
         self.assertTrue(one2.connectInput(0, one3))
         self.assertFalse(one3.connectInput(0, one1))
 
-        two1 = self._node._FoneNodeImpl(self.TwoInputsPacketable(), None)
-        two2 = self._node._FoneNodeImpl(self.TwoInputsPacketable(), None)
-        one1 = self._node._FoneNodeImpl(self.OneInputs(), None)
-        one2 = self._node._FoneNodeImpl(self.OneInputs(), None)
-        one3 = self._node._FoneNodeImpl(self.OneInputs(), None)
+        two1 = self._node._FnCoreNodeImpl(self.TwoInputsPacketable(), None)
+        two2 = self._node._FnCoreNodeImpl(self.TwoInputsPacketable(), None)
+        one1 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
+        one2 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
+        one3 = self._node._FnCoreNodeImpl(self.OneInputs(), None)
         self.assertTrue(one1.connectInput(0, two1))
         self.assertFalse(two1.connectInput(0, one1))
         self.assertFalse(two1.connectInput(1, one1))

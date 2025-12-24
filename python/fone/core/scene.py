@@ -4,10 +4,10 @@ from . import opManager
 from ..impl import _scene
 
 
-class FoneScene(abst._SceneBase):
+class FnCoreScene(abst._SceneBase):
     def __init__(self):
-        super(FoneScene, self).__init__()
-        self.__impl = _scene._FoneSceneImpl(node.FoneNode, opManager.manager)
+        super(FnCoreScene, self).__init__()
+        self.__impl = _scene._FnCoreSceneImpl(node.FnCoreNode, opManager.manager)
 
     def createNode(self, type, name=None):
         return self.__impl.createNode(type, name=name)

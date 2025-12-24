@@ -30,7 +30,7 @@ class GraphScene(unittest.TestCase):
             cls.packet = packet
             cls.opManager = opManager
 
-            class PlusOp(op.FoneOp):
+            class PlusOp(op.FnCoreOp):
                 def __init__(self):
                     super(PlusOp, self).__init__()
 
@@ -45,16 +45,16 @@ class GraphScene(unittest.TestCase):
 
                 def operate(self, params, packetArray):
                     GraphScene.count += 1
-                    return GraphScene.packet.FonePacket(data=packetArray.packet(0).data() + packetArray.packet(1).data())
+                    return GraphScene.packet.FnCorePacket(data=packetArray.packet(0).data() + packetArray.packet(1).data())
 
-            class MakeNums(op.FoneOp):
+            class MakeNums(op.FnCoreOp):
                 def __init__(self):
                     super(MakeNums, self).__init__()
 
                 def params(self):
                     return {
-                        "count": cls.param.FoneParamInt(min=0),
-                        "num": cls.param.FoneParamFloat()
+                        "count": cls.param.FnCoreParamInt(min=0),
+                        "num": cls.param.FnCoreParamFloat()
                     }
 
                 def needs(self):
@@ -65,9 +65,9 @@ class GraphScene(unittest.TestCase):
 
                 def operate(self, params, packetArray):
                     GraphScene.count += 1
-                    return GraphScene.packet.FonePacket(data=np.array([params.get("num")] * params.get("count")))
+                    return GraphScene.packet.FnCorePacket(data=np.array([params.get("num")] * params.get("count")))
 
-            class Output(op.FoneOp):
+            class Output(op.FnCoreOp):
                 def __init__(self):
                     super(Output, self).__init__()
 
@@ -89,23 +89,23 @@ class GraphScene(unittest.TestCase):
             cls.Output = Output()
             cls.count = 0
 
-            opManager.FoneOpManager().registerOp(cls.PlusOp)
-            opManager.FoneOpManager().registerOp(cls.MakeNums)
-            opManager.FoneOpManager().registerOp(cls.Output)
+            opManager.FnCoreOpManager().registerOp(cls.PlusOp)
+            opManager.FnCoreOpManager().registerOp(cls.MakeNums)
+            opManager.FnCoreOpManager().registerOp(cls.Output)
 
     @classmethod
     def tearDownClass(cls):
-        cls.opManager.FoneOpManager().deregisterOp(cls.PlusOp)
-        cls.opManager.FoneOpManager().deregisterOp(cls.MakeNums)
-        cls.opManager.FoneOpManager().deregisterOp(cls.Output)
+        cls.opManager.FnCoreOpManager().deregisterOp(cls.PlusOp)
+        cls.opManager.FnCoreOpManager().deregisterOp(cls.MakeNums)
+        cls.opManager.FnCoreOpManager().deregisterOp(cls.Output)
 
     def test_graph(self):
-        self.assertEqual(len(self.opManager.FoneOpManager().listOps()), 3)
-        self.assertIsNotNone(self.opManager.FoneOpManager().getOp("PlusOp"))
-        self.assertIsNotNone(self.opManager.FoneOpManager().getOp("MakeNums"))
-        self.assertIsNotNone(self.opManager.FoneOpManager().getOp("Output"))
+        self.assertEqual(len(self.opManager.FnCoreOpManager().listOps()), 3)
+        self.assertIsNotNone(self.opManager.FnCoreOpManager().getOp("PlusOp"))
+        self.assertIsNotNone(self.opManager.FnCoreOpManager().getOp("MakeNums"))
+        self.assertIsNotNone(self.opManager.FnCoreOpManager().getOp("Output"))
 
-        scn = self.core_scene.FoneScene()
+        scn = self.core_scene.FnCoreScene()
         p1 = scn.createNode("PlusOp")
         m1 = scn.createNode("MakeNums")
         m2 = scn.createNode("MakeNums")
@@ -126,7 +126,7 @@ class GraphScene(unittest.TestCase):
         p1.connect(m2, 1)
         op.connect(p1, 0)
 
-        graph_scene = self.graph_scene.FoneGraphScene(scn)
+        graph_scene = self.graph_scene.FnGraphGraphScene(scn)
         self.assertIsNotNone(graph_scene)
         self.assertEqual(GraphScene.count, 0)
         graph_scene.packet(m1)

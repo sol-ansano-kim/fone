@@ -4,24 +4,24 @@ from . import abst
 from .. import exceptions
 
 
-class FonePacket(abst._PacketBase):
+class FnCorePacket(abst._PacketBase):
     def __init__(self, metadata=None, data=None):
-        super(FonePacket, self).__init__()
+        super(FnCorePacket, self).__init__()
         self.__metadata = {}
         self.__data = np.array([])
 
         if isinstance(metadata, dict):
             self.__metadata = metadata.copy()
         elif metadata is not None:
-            raise exceptions.FoneInvalidArgumentError(dict, metadata)
+            raise exceptions.FnErrInvalidArgumentError(dict, metadata)
 
         if isinstance(data, np.ndarray):
             self.__data = data.copy()
         elif data is not None:
-            raise exceptions.FoneInvalidArgumentError(np.ndarray, data)
+            raise exceptions.FnErrInvalidArgumentError(np.ndarray, data)
 
     def copy(self):
-        return FonePacket(metadata=self.__metadata, data=self.__data)
+        return FnCorePacket(metadata=self.__metadata, data=self.__data)
 
     def metadata(self):
         return copy.deepcopy(self.__metadata)
@@ -30,14 +30,14 @@ class FonePacket(abst._PacketBase):
         return self.__data.copy()
 
 
-class FonePacketArray(abst._PacketArrayBase):
+class FnCorePacketArray(abst._PacketArrayBase):
     def __init__(self, packets):
-        super(FonePacketArray, self).__init__()
+        super(FnCorePacketArray, self).__init__()
         if not isinstance(packets, list):
-            raise exceptions.FoneInvalidArgumentError(list, packets)
+            raise exceptions.FnErrInvalidArgumentError(list, packets)
         for fp in packets:
-            if not isinstance(fp, FonePacket):
-                raise exceptions.FoneInvalidArgumentError(FonePacket, fp)
+            if not isinstance(fp, FnCorePacket):
+                raise exceptions.FnErrInvalidArgumentError(FnCorePacket, fp)
 
         self.__packets = packets[:]
         self.__count = len(packets)
@@ -47,6 +47,6 @@ class FonePacketArray(abst._PacketArrayBase):
 
     def packet(self, index):
         if index >= self.__count:
-            return FonePacket()
+            return FnCorePacket()
 
         return self.__packets[index]

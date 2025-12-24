@@ -1,14 +1,14 @@
 from . import abst
-from ..core.packet import FonePacket
+from ..core.packet import FnCorePacket
 
 
-class FoneGraphNode(abst._GraphNodeBase):
+class FnGraphNode(abst._GraphNodeBase):
     def __init__(self, node):
-        super(FoneGraphNode, self).__init__(node)
+        super(FnGraphNode, self).__init__(node)
         self.__node = node
         self.__latest_inputs = None
         self.__latest_params = None
-        self.__packet = FonePacket()
+        self.__packet = FnCorePacket()
 
     def node(self):
         return self.__node

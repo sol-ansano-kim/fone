@@ -18,16 +18,16 @@ class NodeManagerTest(unittest.TestCase):
             cls.orgEnv = os.environ.get("FONE_PLUGIN_PATH")
             os.environ["FONE_PLUGIN_PATH"] = os.path.join(__file__, "../plugins")
 
-            class TestOpA(op.FoneOp):
+            class TestOpA(op.FnCoreOp):
                 pass
 
-            class TestOpB(op.FoneOp):
+            class TestOpB(op.FnCoreOp):
                 pass
 
             cls.TestOpA = TestOpA
             cls.TestOpB = TestOpB
 
-            cls.opManager.FoneOpManager().reloadPlugins()
+            cls.opManager.FnCoreOpManager().reloadPlugins()
 
     @classmethod
     def tearDownClass(cls):
@@ -38,18 +38,18 @@ class NodeManagerTest(unittest.TestCase):
         else:
             os.environ["FONE_PLUGIN_PATH"] = cls.orgEnv
 
-        cls.opManager.FoneOpManager().reloadPlugins()
+        cls.opManager.FnCoreOpManager().reloadPlugins()
 
     def test_singleton(self):
-        a = self.opManager.FoneOpManager()
+        a = self.opManager.FnCoreOpManager()
         self.assertIsNotNone(a)
-        b = self.opManager.FoneOpManager()
+        b = self.opManager.FnCoreOpManager()
         self.assertIsNotNone(a)
         self.assertEqual(a, b)
         self.assertEqual(id(a), id(b))
 
     def test_load(self):
-        man = self.opManager.FoneOpManager()
+        man = self.opManager.FnCoreOpManager()
         man.reloadPlugins()
         self.assertEqual(man.listOps(), ["MyOpA", "MyOpB"])
         op = man.getOp("MyOpA")
@@ -60,7 +60,7 @@ class NodeManagerTest(unittest.TestCase):
         self.assertIsNone(op)
 
     def test_reg_dereg(self):
-        man = self.opManager.FoneOpManager()
+        man = self.opManager.FnCoreOpManager()
         self.assertEqual(len(man.listOps()), 2)
         opa = self.TestOpA()
         opa1 = self.TestOpA()
