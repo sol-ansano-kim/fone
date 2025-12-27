@@ -15,7 +15,7 @@ class _FnCoreSceneImpl(object):
 
         return node
 
-    def __del_node(self, node):
+    def __delNode(self, node):
         node.disconnectAll()
         for on in node.outputs():
             indice = []
@@ -34,7 +34,7 @@ class _FnCoreSceneImpl(object):
 
         self.__nodes.pop(node.__hash__())
 
-        self.__del_node(node)
+        self.__delNode(node)
 
         return True
 

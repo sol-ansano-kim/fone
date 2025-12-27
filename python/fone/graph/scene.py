@@ -22,7 +22,7 @@ class FnGraphGraphScene(abst._GraphSceneBase):
 
         self.__graph_nodes = new_nodes
 
-    def __input_network(self, nodes):
+    def __inputNetwork(self, nodes):
         cache = set()
         eval_nodes = []
 
@@ -43,7 +43,7 @@ class FnGraphGraphScene(abst._GraphSceneBase):
     def evaluate(self, nodes, force=False):
         self.__track_nodes()
 
-        waiting = self.__input_network(nodes)
+        waiting = self.__inputNetwork(nodes)
         dirty_set = set()
 
         curs = [x for x in waiting if x.isDirty()]
