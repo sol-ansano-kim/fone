@@ -4,9 +4,9 @@ from ..core import packet
 from .. import exceptions
 
 
-class OFnGraphGraphScene(abst._GraphSceneBase):
+class OFnGraphScene(abst._GraphSceneBase):
     def __init__(self, scene):
-        super(OFnGraphGraphScene, self).__init__(scene)
+        super(OFnGraphScene, self).__init__(scene)
         self.__scene = scene
         self.__graph_nodes = {}
 

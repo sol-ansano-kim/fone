@@ -126,7 +126,7 @@ class GraphScene(unittest.TestCase):
         p1.connect(m2, 1)
         op.connect(p1, 0)
 
-        graph_scene = self.graph_scene.OFnGraphGraphScene(scn)
+        graph_scene = self.graph_scene.OFnGraphScene(scn)
         self.assertIsNotNone(graph_scene)
         self.assertEqual(GraphScene.count, 0)
         graph_scene.packet(m1)
