@@ -4,9 +4,9 @@ from ..core import packet
 from .. import exceptions
 
 
-class FnGraphGraphScene(abst._GraphSceneBase):
+class OFnGraphGraphScene(abst._GraphSceneBase):
     def __init__(self, scene):
-        super(FnGraphGraphScene, self).__init__(scene)
+        super(OFnGraphGraphScene, self).__init__(scene)
         self.__scene = scene
         self.__graph_nodes = {}
 
@@ -16,7 +16,7 @@ class FnGraphGraphScene(abst._GraphSceneBase):
         for sn in self.__scene.nodes():
             n = self.__graph_nodes.get(sn.__hash__(), None)
             if n is None:
-                n = node.FnGraphNode(sn)
+                n = node.OFnGraphNode(sn)
 
             new_nodes[sn.__hash__()] = n
 
@@ -64,7 +64,7 @@ class FnGraphGraphScene(abst._GraphSceneBase):
         latest_count = None
         while (waiting):
             if len(waiting) == latest_count:
-                raise exceptions.FnErrGraphEvaluationError("Failed to evaludate the scene graph")
+                raise exceptions.OFnGraphEvaluationError("Failed to evaludate the scene graph")
 
             latest_count = len(waiting)
 
@@ -86,7 +86,7 @@ class FnGraphGraphScene(abst._GraphSceneBase):
                         break
 
                     if inn is None:
-                        packets.append(packet.FnCorePacket())
+                        packets.append(packet.OFnPacket())
                     else:
                         packets.append(self.__graph_nodes[inn.__hash__()].packet())
 
@@ -94,7 +94,7 @@ class FnGraphGraphScene(abst._GraphSceneBase):
                     pending.append(gn)
                     continue
 
-                gn.evaluate(packet.FnCorePacketArray(packets))
+                gn.evaluate(packet.OFnPacketArray(packets))
                 evaled.add(gn.node().__hash__())
 
             waiting = pending + waiting

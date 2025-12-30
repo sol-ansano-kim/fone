@@ -6,18 +6,18 @@ class CoreNode(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         try:
-            from fone.core import packet
+            from ofne.core import packet
         except:
             import sys
             import os
             sys.path.append((os.path.abspath(os.path.join(__file__, "../../python"))))
         finally:
-            from fone.core import abst
-            from fone.core import node
-            from fone.core import op
-            from fone.core import param
-            from fone.core import packet
-            from fone import exceptions
+            from ofne.core import abst
+            from ofne.core import node
+            from ofne.core import op
+            from ofne.core import param
+            from ofne.core import packet
+            from ofne import exceptions
             cls.node = node
             cls.exceptions = exceptions
             cls.param = param
@@ -30,7 +30,7 @@ class CoreNode(unittest.TestCase):
             def getUniqueName(self, name):
                 return name
 
-        class OneInputs(op.FnCoreOp):
+        class OneInputs(op.OFnOp):
             def __init__(self):
                 super(OneInputs, self).__init__()
 
@@ -43,7 +43,7 @@ class CoreNode(unittest.TestCase):
             def packetable(self):
                 return True
 
-        class TwoInputs(op.FnCoreOp):
+        class TwoInputs(op.OFnOp):
             def __init__(self):
                 super(TwoInputs, self).__init__()
 
@@ -56,7 +56,7 @@ class CoreNode(unittest.TestCase):
             def packetable(self):
                 return False
 
-        class ZeroInputs(op.FnCoreOp):
+        class ZeroInputs(op.OFnOp):
             def __init__(self):
                 super(ZeroInputs, self).__init__()
 
@@ -69,16 +69,16 @@ class CoreNode(unittest.TestCase):
             def packetable(self):
                 return True
 
-        class ParamTester(op.FnCoreOp):
+        class ParamTester(op.OFnOp):
             def __init__(self):
                 super(ParamTester, self).__init__()
 
             def params(self):
                 return {
-                    "int": cls.param.FnCoreParamInt(),
-                    "bool": cls.param.FnCoreParamBool(),
-                    "float": cls.param.FnCoreParamFloat(),
-                    "str": cls.param.FnCoreParamStr(),
+                    "int": cls.param.OFnParamInt(),
+                    "bool": cls.param.OFnParamBool(),
+                    "float": cls.param.OFnParamFloat(),
+                    "str": cls.param.OFnParamStr(),
                 }
 
             def needs(self):
@@ -87,13 +87,13 @@ class CoreNode(unittest.TestCase):
             def packetable(self):
                 return True
 
-        class PlusOp(op.FnCoreOp):
+        class PlusOp(op.OFnOp):
             def __init__(self):
                 super(PlusOp, self).__init__()
 
             def params(self):
                 return {
-                    "num": cls.param.FnCoreParamFloat()
+                    "num": cls.param.OFnParamFloat()
                 }
 
             def needs(self):
@@ -103,16 +103,16 @@ class CoreNode(unittest.TestCase):
                 return True
 
             def operate(self, params, packetArray):
-                return CoreNode.packet.FnCorePacket(data=packetArray.packet(0).data() + params.get("num"))
+                return CoreNode.packet.OFnPacket(data=packetArray.packet(0).data() + params.get("num"))
 
-        class MakeNums(op.FnCoreOp):
+        class MakeNums(op.OFnOp):
             def __init__(self):
                 super(MakeNums, self).__init__()
 
             def params(self):
                 return {
-                    "count": cls.param.FnCoreParamInt(min=0),
-                    "num": cls.param.FnCoreParamFloat()
+                    "count": cls.param.OFnParamInt(min=0),
+                    "num": cls.param.OFnParamFloat()
                 }
 
             def needs(self):
@@ -122,7 +122,7 @@ class CoreNode(unittest.TestCase):
                 return True
 
             def operate(self, params, packetArray):
-                return CoreNode.packet.FnCorePacket(data=np.array([params.get("num")] * params.get("count")))
+                return CoreNode.packet.OFnPacket(data=np.array([params.get("num")] * params.get("count")))
 
         cls.OneInputs = OneInputs
         cls.ZeroInputs = ZeroInputs
@@ -134,7 +134,7 @@ class CoreNode(unittest.TestCase):
 
     def test_params(self):
         ptop = self.ParamTester()
-        pt1 = self.node.FnCoreNode(self.scene, ptop)
+        pt1 = self.node.OFnNode(self.scene, ptop)
         self.assertEqual(sorted(pt1.paramNames()), ["bool", "float", "int", "str"])
         bp = pt1.getParam("bool")
         self.assertEqual(bp.get(), pt1.getParamValue("bool"))
@@ -155,8 +155,8 @@ class CoreNode(unittest.TestCase):
         self.assertEqual(ip.get(), pt1.getParamValue("int"))
 
     def test_connection(self):
-        i0 = self.node.FnCoreNode(self.scene, self.ZeroInputs())
-        i1 = self.node.FnCoreNode(self.scene, self.OneInputs())
+        i0 = self.node.OFnNode(self.scene, self.ZeroInputs())
+        i1 = self.node.OFnNode(self.scene, self.OneInputs())
 
         self.assertTrue(i1.connect(i0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
@@ -182,21 +182,21 @@ class CoreNode(unittest.TestCase):
         self.assertEqual(len(i0.outputs()), 0)
         self.assertFalse(i1.disconnect(0))
 
-        with self.assertRaises(self.exceptions.FnErrIndexError):
+        with self.assertRaises(self.exceptions.OFnIndexError):
             self.assertTrue(i1.connect(i0, 1))
-        with self.assertRaises(self.exceptions.FnErrIndexError):
+        with self.assertRaises(self.exceptions.OFnIndexError):
             self.assertTrue(i1.disconnect(1))
 
-        i2 = self.node.FnCoreNode(self.scene, self.TwoInputs())
+        i2 = self.node.OFnNode(self.scene, self.TwoInputs())
         self.assertTrue(i1.connect(i0, 0))
         self.assertFalse(i1.connect(i2, 0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
         self.assertEqual(i1.inputs()[0], i0)
 
-        i01 = self.node.FnCoreNode(self.scene, self.ZeroInputs())
-        i02 = self.node.FnCoreNode(self.scene, self.ZeroInputs())
-        i1 = self.node.FnCoreNode(self.scene, self.OneInputs())
-        i2 = self.node.FnCoreNode(self.scene, self.TwoInputs())
+        i01 = self.node.OFnNode(self.scene, self.ZeroInputs())
+        i02 = self.node.OFnNode(self.scene, self.ZeroInputs())
+        i1 = self.node.OFnNode(self.scene, self.OneInputs())
+        i2 = self.node.OFnNode(self.scene, self.TwoInputs())
 
         self.assertTrue(i1.connect(i01, 0))
         self.assertEqual(len([x for x in i1.inputs() if x]), 1)
@@ -224,43 +224,43 @@ class CoreNode(unittest.TestCase):
     def test_operaion(self):
         op_plus = self.PlusOp()
         op_make = self.MakeNums()
-        node_plus = self.node.FnCoreNode(self.scene, op_plus)
-        node_make = self.node.FnCoreNode(self.scene, op_make)
-        pck = node_make.operate(self.packet.FnCorePacketArray([]))
+        node_plus = self.node.OFnNode(self.scene, op_plus)
+        node_make = self.node.OFnNode(self.scene, op_make)
+        pck = node_make.operate(self.packet.OFnPacketArray([]))
         self.assertIsNotNone(pck)
         self.assertEqual(len(pck.data()), 0)
 
         node_make.setParamValue("count", 2)
-        pck2 = node_make.operate(self.packet.FnCorePacketArray([]))
+        pck2 = node_make.operate(self.packet.OFnPacketArray([]))
         self.assertEqual(len(pck2.data()), 2)
         self.assertEqual(pck2.data()[0], pck2.data()[1])
         self.assertEqual(pck2.data()[0], 0)
 
         node_make.setParamValue("num", 1.0)
         node_make.setParamValue("count", 3)
-        pck3 = node_make.operate(self.packet.FnCorePacketArray([]))
+        pck3 = node_make.operate(self.packet.OFnPacketArray([]))
         self.assertEqual(len(pck3.data()), 3)
         self.assertEqual(pck3.data()[0], pck3.data()[1])
         self.assertEqual(pck3.data()[0], pck3.data()[2])
         self.assertEqual(pck3.data()[0], 1.0)
 
-        ppck = node_plus.operate(self.packet.FnCorePacketArray([pck3]))
+        ppck = node_plus.operate(self.packet.OFnPacketArray([pck3]))
         self.assertEqual(len(ppck.data()), 3)
         self.assertEqual(ppck.data()[0], ppck.data()[1])
         self.assertEqual(ppck.data()[0], ppck.data()[2])
         self.assertEqual(ppck.data()[0], 1.0)
 
         node_plus.setParamValue("num", 3.5)
-        ppck = node_plus.operate(self.packet.FnCorePacketArray([pck3]))
+        ppck = node_plus.operate(self.packet.OFnPacketArray([pck3]))
         self.assertEqual(len(ppck.data()), 3)
         self.assertEqual(ppck.data()[0], ppck.data()[1])
         self.assertEqual(ppck.data()[0], ppck.data()[2])
         self.assertEqual(ppck.data()[0], 4.5)
 
     def test_methods(self):
-        mn = self.node.FnCoreNode(self.scene, self.MakeNums())
+        mn = self.node.OFnNode(self.scene, self.MakeNums())
         self.assertEqual(mn.name(), "MakeNums")
-        mn = self.node.FnCoreNode(self.scene, self.MakeNums(), name="make")
+        mn = self.node.OFnNode(self.scene, self.MakeNums(), name="make")
         self.assertEqual(mn.name(), "make")
         self.assertEqual(mn.type(), "MakeNums")
         self.assertEqual(mn.rename("aaa"), "aaa")

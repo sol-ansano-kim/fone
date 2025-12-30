@@ -1,14 +1,14 @@
 from . import abst
-from ..core.packet import FnCorePacket
+from ..core.packet import OFnPacket
 
 
-class FnGraphNode(abst._GraphNodeBase):
+class OFnGraphNode(abst._GraphNodeBase):
     def __init__(self, node):
-        super(FnGraphNode, self).__init__(node)
+        super(OFnGraphNode, self).__init__(node)
         self.__node = node
         self.__latest_inputs = None
         self.__latest_params = None
-        self.__packet = FnCorePacket()
+        self.__packet = OFnPacket()
 
     def node(self):
         return self.__node

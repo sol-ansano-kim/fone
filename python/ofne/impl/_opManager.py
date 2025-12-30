@@ -8,9 +8,9 @@ import importlib.util
 RE_PY = re.compile(r"\.py$", re.IGNORECASE)
 
 
-class _FnCoreOpManagerImpl(object):
+class _OFnOpManagerImpl(object):
     def __init__(self, opClass):
-        super(_FnCoreOpManagerImpl, self).__init__()
+        super(_OFnOpManagerImpl, self).__init__()
         self.__opClass = opClass
         self.__plugins = {}
         self.reloadPlugins()
@@ -18,7 +18,7 @@ class _FnCoreOpManagerImpl(object):
     def reloadPlugins(self):
         self.__plugins = {}
 
-        for path in os.environ.get("FONE_PLUGIN_PATH", "").split(os.pathsep):
+        for path in os.environ.get("OFNE_PLUGIN_PATH", "").split(os.pathsep):
             if not path:
                 continue
 
@@ -38,7 +38,7 @@ class _FnCoreOpManagerImpl(object):
 
                 mdl = None
                 try:
-                    spec = importlib.util.spec_from_file_location(f"_fone_plugin{os.path.splitext(f)[0]}", fp)
+                    spec = importlib.util.spec_from_file_location(f"_ofne_plugin{os.path.splitext(f)[0]}", fp)
                     mdl = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(mdl)
                 except Exception as e:

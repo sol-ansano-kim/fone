@@ -1,24 +1,24 @@
-class FnErrInvalidArgumentError(Exception):
+class OFnInvalidArgumentError(Exception):
     def __init__(self, expected, given):
-        super(FnErrInvalidArgumentError, self).__init__(f"Invalid argument - expected type '{expected.__name__}', but received '{type(given).__name__}'")
+        super(OFnInvalidArgumentError, self).__init__(f"Invalid argument - expected type '{expected.__name__}', but received '{type(given).__name__}'")
 
 
-class FnErrNotImplementedError(Exception):
+class OFnNotImplementedError(Exception):
     def __init__(self, instance, name):
         import inspect
         cname = instance.__name__ if inspect.isclass(instance) else instance.__class__.__name__
-        super(FnErrNotImplementedError, self).__init__(f"'{cname}.{name}' is not implemented yet")
+        super(OFnNotImplementedError, self).__init__(f"'{cname}.{name}' is not implemented yet")
 
 
-class FnErrIndexError(Exception):
+class OFnIndexError(Exception):
     def __init__(self, index, total):
-        super(FnErrIndexError, self).__init__(f"list index out of range : {index}/{total}")
+        super(OFnIndexError, self).__init__(f"list index out of range : {index}/{total}")
 
 
-class FnErrInvalidParamValueError(Exception):
+class OFnInvalidParamValueError(Exception):
     def __init__(self, instance, value):
-        super(FnErrInvalidParamValueError, self).__init__(f"Invalid value '{value}' given for '{instance.__class__.__name__}'")
+        super(OFnInvalidParamValueError, self).__init__(f"Invalid value '{value}' given for '{instance.__class__.__name__}'")
 
 
-class FnErrGraphEvaluationError(Exception):
+class OFnGraphEvaluationError(Exception):
     pass

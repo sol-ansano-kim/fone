@@ -6,19 +6,19 @@ class GraphNode(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         try:
-            from fone.core import packet
+            from ofne.core import packet
         except:
             import sys
             import os
             sys.path.append((os.path.abspath(os.path.join(__file__, "../../python"))))
         finally:
-            from fone.core import abst
-            from fone.core import node as core_node
-            from fone.core import op
-            from fone.core import param
-            from fone.core import packet
-            from fone.graph import node as graph_node
-            from fone import exceptions
+            from ofne.core import abst
+            from ofne.core import node as core_node
+            from ofne.core import op
+            from ofne.core import param
+            from ofne.core import packet
+            from ofne.graph import node as graph_node
+            from ofne import exceptions
             cls.core_node = core_node
             cls.graph_node = graph_node
             cls.exceptions = exceptions
@@ -32,13 +32,13 @@ class GraphNode(unittest.TestCase):
             def getUniqueName(self, name):
                 return name
 
-        class PlusOp(op.FnCoreOp):
+        class PlusOp(op.OFnOp):
             def __init__(self):
                 super(PlusOp, self).__init__()
 
             def params(self):
                 return {
-                    "num": cls.param.FnCoreParamFloat()
+                    "num": cls.param.OFnParamFloat()
                 }
 
             def needs(self):
@@ -49,16 +49,16 @@ class GraphNode(unittest.TestCase):
 
             def operate(self, params, packetArray):
                 GraphNode.count += 1
-                return GraphNode.packet.FnCorePacket(data=packetArray.packet(0).data() + params.get("num"))
+                return GraphNode.packet.OFnPacket(data=packetArray.packet(0).data() + params.get("num"))
 
-        class MakeNums(op.FnCoreOp):
+        class MakeNums(op.OFnOp):
             def __init__(self):
                 super(MakeNums, self).__init__()
 
             def params(self):
                 return {
-                    "count": cls.param.FnCoreParamInt(min=0),
-                    "num": cls.param.FnCoreParamFloat()
+                    "count": cls.param.OFnParamInt(min=0),
+                    "num": cls.param.OFnParamFloat()
                 }
 
             def needs(self):
@@ -69,7 +69,7 @@ class GraphNode(unittest.TestCase):
 
             def operate(self, params, packetArray):
                 GraphNode.count += 1
-                return GraphNode.packet.FnCorePacket(data=np.array([params.get("num")] * params.get("count")))
+                return GraphNode.packet.OFnPacket(data=np.array([params.get("num")] * params.get("count")))
 
         cls.PlusOp = PlusOp
         cls.MakeNums = MakeNums
@@ -79,11 +79,11 @@ class GraphNode(unittest.TestCase):
     def test_creation(self):
         op_plus = self.PlusOp()
         op_make = self.MakeNums()
-        plus_node = self.core_node.FnCoreNode(self.scene, op_plus)
-        make_node = self.core_node.FnCoreNode(self.scene, op_make)
+        plus_node = self.core_node.OFnNode(self.scene, op_plus)
+        make_node = self.core_node.OFnNode(self.scene, op_make)
 
-        plus = self.graph_node.FnGraphNode(plus_node)
-        make = self.graph_node.FnGraphNode(make_node)
+        plus = self.graph_node.OFnGraphNode(plus_node)
+        make = self.graph_node.OFnGraphNode(make_node)
         self.assertIsNotNone(plus)
         self.assertIsNotNone(make)
 
@@ -92,10 +92,10 @@ class GraphNode(unittest.TestCase):
 
     def test_eval_by_param(self):
         GraphNode.count = 0
-        empty_packey_array = self.packet.FnCorePacketArray([])
+        empty_packey_array = self.packet.OFnPacketArray([])
 
-        make_node = self.core_node.FnCoreNode(self.scene, self.MakeNums())
-        make = self.graph_node.FnGraphNode(make_node)
+        make_node = self.core_node.OFnNode(self.scene, self.MakeNums())
+        make = self.graph_node.OFnGraphNode(make_node)
         self.assertTrue(make.isDirty())
         p = make.packet()
         self.assertEqual(len(p.data()), 0)
@@ -156,20 +156,20 @@ class GraphNode(unittest.TestCase):
 
     def test_eval_by_connection(self):
         GraphNode.count = 0
-        empty_packey_array = self.packet.FnCorePacketArray([])
+        empty_packey_array = self.packet.OFnPacketArray([])
 
-        make_node_1 = self.core_node.FnCoreNode(self.scene, self.MakeNums())
-        make_1 = self.graph_node.FnGraphNode(make_node_1)
-        make_node_2 = self.core_node.FnCoreNode(self.scene, self.MakeNums())
-        make_2 = self.graph_node.FnGraphNode(make_node_2)
+        make_node_1 = self.core_node.OFnNode(self.scene, self.MakeNums())
+        make_1 = self.graph_node.OFnGraphNode(make_node_1)
+        make_node_2 = self.core_node.OFnNode(self.scene, self.MakeNums())
+        make_2 = self.graph_node.OFnGraphNode(make_node_2)
 
         make_node_1.setParamValue("count", 1)
         make_node_1.setParamValue("num", 0.5)
         make_node_2.setParamValue("count", 3)
         make_node_2.setParamValue("num", 1.1)
 
-        plus_node = self.core_node.FnCoreNode(self.scene, self.PlusOp())
-        plus = self.graph_node.FnGraphNode(plus_node)
+        plus_node = self.core_node.OFnNode(self.scene, self.PlusOp())
+        plus = self.graph_node.OFnGraphNode(plus_node)
         self.assertTrue(plus.isDirty())
         self.assertEqual(GraphNode.count, 0)
         plus.evaluate(empty_packey_array)
@@ -183,14 +183,14 @@ class GraphNode(unittest.TestCase):
         self.assertTrue(plus.isDirty())
         make_1.evaluate(empty_packey_array)
         self.assertEqual(GraphNode.count, 2)
-        plus.evaluate(self.packet.FnCorePacketArray([make_1.packet()]))
+        plus.evaluate(self.packet.OFnPacketArray([make_1.packet()]))
         self.assertEqual(GraphNode.count, 3)
         plus_packet = plus.packet()
         self.assertEqual(len(plus_packet.data()), 1)
         self.assertEqual(plus_packet.data()[0], 0.5)
         make_1.evaluate(empty_packey_array)
         self.assertEqual(GraphNode.count, 3)
-        plus.evaluate(self.packet.FnCorePacketArray([make_1.packet()]))
+        plus.evaluate(self.packet.OFnPacketArray([make_1.packet()]))
         self.assertEqual(GraphNode.count, 3)
         plus_packet = plus.packet()
         self.assertEqual(len(plus_packet.data()), 1)
@@ -201,7 +201,7 @@ class GraphNode(unittest.TestCase):
         self.assertTrue(plus.isDirty())
         make_2.evaluate(empty_packey_array)
         self.assertEqual(GraphNode.count, 4)
-        plus.evaluate(self.packet.FnCorePacketArray([make_2.packet()]))
+        plus.evaluate(self.packet.OFnPacketArray([make_2.packet()]))
         self.assertEqual(GraphNode.count, 5)
         self.assertFalse(plus.isDirty())
         plus_packet = plus.packet()
@@ -211,7 +211,7 @@ class GraphNode(unittest.TestCase):
         self.assertEqual(plus_packet.data()[2], 1.1)
         make_2.evaluate(empty_packey_array)
         self.assertEqual(GraphNode.count, 5)
-        plus.evaluate(self.packet.FnCorePacketArray([make_2.packet()]))
+        plus.evaluate(self.packet.OFnPacketArray([make_2.packet()]))
         self.assertEqual(GraphNode.count, 5)
         plus_packet = plus.packet()
         self.assertEqual(len(plus_packet.data()), 3)
@@ -224,7 +224,7 @@ class GraphNode(unittest.TestCase):
         self.assertTrue(plus.isDirty())
         make_1.evaluate(empty_packey_array)
         self.assertEqual(GraphNode.count, 5)
-        plus.evaluate(self.packet.FnCorePacketArray([make_1.packet()]))
+        plus.evaluate(self.packet.OFnPacketArray([make_1.packet()]))
         self.assertEqual(GraphNode.count, 6)
         plus_packet = plus.packet()
         self.assertEqual(len(plus_packet.data()), 1)
@@ -235,7 +235,7 @@ class GraphNode(unittest.TestCase):
         self.assertTrue(plus.isDirty())
         make_2.evaluate(empty_packey_array)
         self.assertEqual(GraphNode.count, 6)
-        plus.evaluate(self.packet.FnCorePacketArray([make_2.packet()]))
+        plus.evaluate(self.packet.OFnPacketArray([make_2.packet()]))
         self.assertEqual(GraphNode.count, 7)
         self.assertFalse(plus.isDirty())
         plus_packet = plus.packet()

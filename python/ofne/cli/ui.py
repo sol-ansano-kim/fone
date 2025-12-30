@@ -3,16 +3,16 @@ import sys
 from PySide6 import QtWidgets
 
 try:
-    import fone.ui
+    import ofne.ui
 except:
     sys.path.append(os.path.abspath(os.path.join(__file__, "../../..")))
-    import fone.ui
+    import ofne.ui
 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
 
-    win = fone.ui.MainWindow()
+    win = ofne.ui.MainWindow()
     win.show()
 
     sys.exit(app.exec())

@@ -2,22 +2,22 @@ from . import abst
 from .. import exceptions
 
 
-class FnCoreOp(abst._OpBase):
+class OFnOp(abst._OpBase):
     def __init__(self):
-        super(FnCoreOp, self).__init__()
+        super(OFnOp, self).__init__()
 
     @classmethod
     def type(cls):
         return cls.__name__
 
     def needs(self):
-        raise exceptions.FnErrNotImplementedError(self, "needs")
+        raise exceptions.OFnNotImplementedError(self, "needs")
 
     def params(self):
-        raise exceptions.FnErrNotImplementedError(self, "params")
+        raise exceptions.OFnNotImplementedError(self, "params")
 
     def packetable(self):
-        raise exceptions.FnErrNotImplementedError(self, "packetable")
+        raise exceptions.OFnNotImplementedError(self, "packetable")
 
     def operate(self, params, packetArray):
-        raise exceptions.FnErrNotImplementedError(self, "operate")
+        raise exceptions.OFnNotImplementedError(self, "operate")

@@ -2,15 +2,15 @@ from . import abst
 from .. import exceptions
 
 
-FnCoreParamTypeBool = 0
-FnCoreParamTypeInt = 1
-FnCoreParamTypeFloat = 2
-FnCoreParamTypeStr = 3
+ParamTypeBool = 0
+ParamTypeInt = 1
+ParamTypeFloat = 2
+ParamTypeStr = 3
 
 
-class FnCoreParamBase(abst._ParamBase):
+class OFnParamBase(abst._ParamBase):
     def __init__(self, default):
-        super(FnCoreParamBase, self).__init__()
+        super(OFnParamBase, self).__init__()
         self.__value = None
         self.__default = None
 
@@ -25,46 +25,46 @@ class FnCoreParamBase(abst._ParamBase):
 
     def set(self, value):
         if not self.isValid(value):
-            raise exceptions.FnErrInvalidParamValueError(self, value)
+            raise exceptions.OFnInvalidParamValueError(self, value)
 
         self.__value = value
 
     def type(self):
-        raise exceptions.FnErrNotImplementedError(self, "type")
+        raise exceptions.OFnNotImplementedError(self, "type")
 
     def isValid(self, value):
-        raise exceptions.FnErrNotImplementedError(self, "isValid")
+        raise exceptions.OFnNotImplementedError(self, "isValid")
 
     def copy(self):
-        raise exceptions.FnErrNotImplementedError(self, "copy")
+        raise exceptions.OFnNotImplementedError(self, "copy")
 
 
-class FnCoreParamBool(FnCoreParamBase):
+class OFnParamBool(OFnParamBase):
     def __init__(self, default=False):
-        super(FnCoreParamBool, self).__init__(default)
+        super(OFnParamBool, self).__init__(default)
 
     def type(self):
-        return FnCoreParamTypeBool
+        return ParamTypeBool
 
     def isValid(self, value):
         return isinstance(value, bool)
 
     def copy(self):
-        n = FnCoreParamBool(self.default())
+        n = OFnParamBool(self.default())
         n.set(self.get())
 
         return n
 
 
-class FnCoreParamStr(FnCoreParamBase):
+class OFnParamStr(OFnParamBase):
     def __init__(self, default="", valueList=None, enforceValueList=False):
         self.__value_list = list(valueList) if isinstance(valueList, (list, tuple, set)) else []
         self.__enforce_value_list = enforceValueList if self.__value_list else False
 
-        super(FnCoreParamStr, self).__init__(default)
+        super(OFnParamStr, self).__init__(default)
 
     def type(self):
-        return FnCoreParamTypeStr
+        return ParamTypeStr
 
     def enforceValueList(self):
         return self.__enforce_value_list
@@ -82,18 +82,18 @@ class FnCoreParamStr(FnCoreParamBase):
         return True
 
     def copy(self):
-        n = FnCoreParamStr(default=self.default(), valueList=self.__value_list, enforceValueList=self.__enforce_value_list)
+        n = OFnParamStr(default=self.default(), valueList=self.__value_list, enforceValueList=self.__enforce_value_list)
         n.set(self.get())
 
         return n
 
 
-class FoneNumericParam(FnCoreParamBase):
+class OFnNumericParam(OFnParamBase):
     def __init__(self, default=None, min=None, max=None):
         self.__min = min
         self.__max = max
 
-        super(FoneNumericParam, self).__init__(default)
+        super(OFnNumericParam, self).__init__(default)
 
     def min(self):
         return self.__min
@@ -117,12 +117,12 @@ class FoneNumericParam(FnCoreParamBase):
         return n
 
 
-class FnCoreParamInt(FoneNumericParam):
+class OFnParamInt(OFnNumericParam):
     def __init__(self, default=0, min=None, max=None):
-        super(FnCoreParamInt, self).__init__(default=default, min=min, max=max)
+        super(OFnParamInt, self).__init__(default=default, min=min, max=max)
 
     def type(self):
-        return FnCoreParamTypeInt
+        return ParamTypeInt
 
     def isValid(self, value):
         if not isinstance(value, int):
@@ -131,26 +131,26 @@ class FnCoreParamInt(FoneNumericParam):
         if isinstance(value, bool):
             return False
 
-        return super(FnCoreParamInt, self).isValid(value)
+        return super(OFnParamInt, self).isValid(value)
 
 
-class FnCoreParamFloat(FoneNumericParam):
+class OFnParamFloat(OFnNumericParam):
     def __init__(self, default=0.0, min=None, max=None):
-        super(FnCoreParamFloat, self).__init__(default=default, min=min, max=max)
+        super(OFnParamFloat, self).__init__(default=default, min=min, max=max)
 
     def type(self):
-        return FnCoreParamTypeFloat
+        return ParamTypeFloat
 
     def isValid(self, value):
         if not isinstance(value, float):
             return False
 
-        return super(FnCoreParamFloat, self).isValid(value)
+        return super(OFnParamFloat, self).isValid(value)
 
 
-class FnCoreParams(object):
+class OFnParams(object):
     def __init__(self, paramDict):
-        super(FnCoreParams).__init__()
+        super(OFnParams).__init__()
         self.__params = {}
         for key, param in paramDict.items():
             self.__params[key] = param.copy()
@@ -160,7 +160,7 @@ class FnCoreParams(object):
         for key, param in self.__params.items():
             nparm[key] = param.copy()
 
-        return FnCoreParams(nparm)
+        return OFnParams(nparm)
 
     def getParam(self, key):
         if key not in self.__params:
